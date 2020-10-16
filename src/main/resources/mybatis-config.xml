@@ -35,5 +35,8 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
         <table tableName="sku_detail" domainObjectName="SkuDetailDO" mapperName="SkuDetailMapper"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
+
+        <table tableName="order" domainObjectName="OrderDO" mapperName="OrderMapper"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
    </context>
 </generatorConfiguration>

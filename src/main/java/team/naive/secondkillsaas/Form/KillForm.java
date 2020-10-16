@@ -1,19 +1,17 @@
-package team.naive.secondkillsaas.DTO;
+package team.naive.secondkillsaas.Form;
 
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * @Description
  * @Author Toviel Xue
- * @Date 2020/9/25
+ * @Date 2020/10/16
  */
 @Data
-public class KillDTO {
+public class KillForm {
 
     // 流水号保证幂等
-    Long TransactionId;
+    Long transactionId;
 
     Long skuId;
 

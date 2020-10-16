@@ -1,12 +1,11 @@
 package team.naive.secondkillsaas.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.KillService;
 import team.naive.secondkillsaas.DTO.KillDTO;
+import team.naive.secondkillsaas.Form.KillForm;
 import team.naive.secondkillsaas.VO.ResponseVO;
 
 /**
@@ -20,8 +19,28 @@ public class KillController {
     @Autowired
     private KillService killService;
 
+    @PostMapping("/killItem")
+    public ResponseVO killItem(@ModelAttribute KillForm killForm) {
+        KillDTO killDTO = new KillDTO();
+        killDTO.setTransactionId(killForm.getTransactionId());
+        killDTO.setUserId(killForm.getUserId());
+        killDTO.setSkuId(killForm.getSkuId());
+
+        Boolean res1 = false;
+        try {
+            res1 = killService.killItem(killDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ResponseVO res = new ResponseVO();
+        res.setSuccess(true);
+        res.setContent(res1);
+        return res;
+    }
+
     @GetMapping("/eztest")
-    public ResponseVO eztest(){
+    public ResponseVO eztest() {
         ResponseVO res = new ResponseVO();
         KillDTO killDTO = new KillDTO();
         killDTO.setSkuId(10001001L);
