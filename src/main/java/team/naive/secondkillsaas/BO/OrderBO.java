@@ -11,9 +11,9 @@ import java.util.Date;
  */
 
 @Data
-public class ItemDetailBO {
+public class OrderBO {
 
-    private Long itemId;
+    private Long orderId;
 
     private Date gmtCreated;
 
@@ -21,8 +21,10 @@ public class ItemDetailBO {
 
     private Boolean isDeleted;
 
-    private String itemName;
+    private Long skuId;
 
-    private String itemDesc;
+    private Long amount;
+
+    private Boolean finished;
 
 }

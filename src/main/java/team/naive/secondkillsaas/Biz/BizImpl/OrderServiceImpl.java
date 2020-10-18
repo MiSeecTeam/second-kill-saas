@@ -1,0 +1,62 @@
+package team.naive.secondkillsaas.Biz.BizImpl;/**
+ * Created by Administrator on 2019/6/16.
+ */
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import team.naive.secondkillsaas.BO.*;
+import team.naive.secondkillsaas.Biz.ItemService;
+import team.naive.secondkillsaas.Biz.OrderService;
+import team.naive.secondkillsaas.DO.ItemDetailDO;
+import team.naive.secondkillsaas.DO.ItemDetailDOExample;
+import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
+import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
+import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+/**
+ * @Description
+ * @Author Toviel Xue
+ * @Date 2020/9/22
+ */
+@Service
+public class OrderServiceImpl implements OrderService {
+
+    private static final Logger log= LoggerFactory.getLogger(OrderServiceImpl.class);
+
+    @Override
+    public List<OrderBO> listOrders(Long userId){
+        return null;
+    };
+
+    @Override
+    public OrderDetailBO getOrderDetail(Long orderId){
+        return null;
+    };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
