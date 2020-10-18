@@ -58,28 +58,31 @@ public class KillServiceImpl implements KillService {
         // 尝试获取分布式锁，todo: 组件化封装+超时重试
         if (tryLock(skuId)) {
             // 幂等控制，todo：同样的，消除性能瓶颈+组件化
-            Boolean lastResult = tryGetLast(transactionId);
-            if (lastResult != null) {
-                return lastResult;
+            try {
+                Boolean lastResult = tryGetLast(transactionId);
+                if (lastResult != null) {
+                    return lastResult;
+                }
+
+                // 执行业务逻辑
+                SkuQuantityDO skuQuantityDO = skuQuantityMapper.selectByPrimaryKey(skuId);
+                if (skuQuantityDO.getAmount() > 0) {
+                    skuQuantityDO.setAmount(skuQuantityDO.getAmount() - 1);
+                    skuQuantityDO.setGmtModified(new Date());
+                    skuQuantityMapper.updateByPrimaryKey(skuQuantityDO);
+                    result = true;
+                }
+
+                // 保存执行记录，方便幂等控制
+                saveLast(transactionId, result);
+            }finally {
+                // 分布式锁解锁
+                unLock(skuId);
             }
-
-            // 执行业务逻辑
-            SkuQuantityDO skuQuantityDO = skuQuantityMapper.selectByPrimaryKey(skuId);
-            if (skuQuantityDO.getAmount()>0) {
-                skuQuantityDO.setAmount(skuQuantityDO.getAmount()-1);
-                skuQuantityDO.setGmtModified(new Date());
-                skuQuantityMapper.updateByPrimaryKey(skuQuantityDO);
-                result = true;
-            }
-
-            // 保存执行记录，方便幂等控制
-            saveLast(transactionId, result);
-
-            // 分布式锁解锁
-            unLock(skuId);
         } else {
             // todo: 自定义Exception
-            throw new Exception();
+//            throw new Exception();
+            System.out.println("key lock failed");
         }
         return result;
     }
@@ -90,7 +93,7 @@ public class KillServiceImpl implements KillService {
         if (redisUtils.get(KILL_LOCK_PREFIX + skuId)!=null) {
             return false;
         }
-        redisUtils.set(KILL_LOCK_PREFIX + skuId);
+        redisUtils.set(KILL_LOCK_PREFIX + skuId, 2000);
         return true;
     }
 

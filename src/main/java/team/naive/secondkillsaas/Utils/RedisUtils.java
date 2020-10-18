@@ -85,6 +85,8 @@ public class RedisUtils {
             }else{
                 redisTemplate.delete(CollectionUtils.arrayToList(key));
             }
+        } else {
+            System.out.println("key"+ key +"not found");
         }
     }
 
@@ -102,12 +104,27 @@ public class RedisUtils {
     /**
      * 普通缓存放入
      * @param key 键
-     * @param value 值
      * @return true成功 false失败
      */
     public boolean set(String key) {
         try {
             redisTemplate.opsForValue().set(key, key);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 普通缓存放入
+     * @param key 键
+     * @param time 过期时间
+     * @return true成功 false失败
+     */
+    public boolean set(String key, long time) {
+        try {
+            redisTemplate.opsForValue().set(key, key, time, TimeUnit.MILLISECONDS);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
