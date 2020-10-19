@@ -1,6 +1,6 @@
-package team.naive.secondkillsaas.Mapper;
+package team.naive.secondkillsaas.Redis;
 
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.SkuDetailDO;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
@@ -11,7 +11,6 @@ import team.naive.secondkillsaas.DO.SkuQuantityDO;
  * @date: 2020/10/19
  * @description:
  */
-@Repository
 public interface RedisMapper {
 
     /*

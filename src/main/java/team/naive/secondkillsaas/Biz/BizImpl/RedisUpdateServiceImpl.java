@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import team.naive.secondkillsaas.Biz.RedisUpdateService;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
-import team.naive.secondkillsaas.Mapper.RedisMapper;
+import team.naive.secondkillsaas.Redis.RedisMapper;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 

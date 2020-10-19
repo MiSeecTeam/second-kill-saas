@@ -2,27 +2,19 @@ package team.naive.secondkillsaas.Biz.BizImpl;/**
  * Created by Administrator on 2019/6/17.
  */
 
-import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import team.naive.secondkillsaas.BO.SkuQuantityBO;
 import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.KillService;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.DTO.KillDTO;
-import team.naive.secondkillsaas.Mapper.RedisMapper;
+import team.naive.secondkillsaas.Redis.RedisMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 import team.naive.secondkillsaas.Security.UserValidation;
 import team.naive.secondkillsaas.Utils.RedisUtils;
-
-import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Description
