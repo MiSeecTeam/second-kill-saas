@@ -3,6 +3,7 @@ package team.naive.secondkillsaas.Biz.BizImpl;/**
  */
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -14,9 +15,13 @@ import team.naive.secondkillsaas.BO.SkuQuantityBO;
 import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.ItemDetailDOExample;
 import team.naive.secondkillsaas.Biz.ItemService;
+import team.naive.secondkillsaas.DO.SkuDetailDO;
+import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
+import team.naive.secondkillsaas.Mapper.RedisMapper;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
+import team.naive.secondkillsaas.Utils.RedisUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +36,9 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
 
     private static final Logger log= LoggerFactory.getLogger(ItemServiceImpl.class);
+
+    @Autowired
+    private RedisMapper redisMapper;
 
     @Autowired
     private ItemDetailMapper itemDetailMapper;
@@ -59,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDetailBO getItemDetail(Long id) {
         ItemDetailBO itemDetailBO = new ItemDetailBO();
-        BeanUtils.copyProperties(itemDetailMapper.selectByPrimaryKey(id), itemDetailBO);
+        BeanUtils.copyProperties(redisMapper.getItemDetail(id), itemDetailBO);
         return itemDetailBO;
     }
 
@@ -67,16 +75,18 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public SkuDetailBO getSkuDetail(Long id) {
         SkuDetailBO skuDetailBO = new SkuDetailBO();
-        BeanUtils.copyProperties(skuDetailMapper.selectByPrimaryKey(id), skuDetailBO);
+        BeanUtils.copyProperties(redisMapper.getSkuDetail(id), skuDetailBO);
         return skuDetailBO;
     }
 
     @Override
     public SkuQuantityBO getSkuQuantity(Long id) {
         SkuQuantityBO skuQuantityBO = new SkuQuantityBO();
-        BeanUtils.copyProperties(skuQuantityMapper.selectByPrimaryKey(id), skuQuantityBO);
+        BeanUtils.copyProperties(redisMapper.getSkuQuantity(id), skuQuantityBO);
         return skuQuantityBO;
     }
+
+
 }
 
 
