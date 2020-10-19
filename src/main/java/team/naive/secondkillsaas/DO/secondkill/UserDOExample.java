@@ -1,4 +1,4 @@
-package team.naive.secondkillsaas.DO;
+package team.naive.secondkillsaas.DO.secondkill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -304,76 +304,6 @@ public class UserDOExample {
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNull() {
-            addCriterion("name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameIsNotNull() {
-            addCriterion("name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameEqualTo(String value) {
-            addCriterion("name =", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameNotEqualTo(String value) {
-            addCriterion("name <>", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameGreaterThan(String value) {
-            addCriterion("name >", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("name >=", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameLessThan(String value) {
-            addCriterion("name <", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("name <=", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameLike(String value) {
-            addCriterion("name like", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameNotLike(String value) {
-            addCriterion("name not like", value, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameIn(List<String> values) {
-            addCriterion("name in", values, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameNotIn(List<String> values) {
-            addCriterion("name not in", values, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("name between", value1, value2, "name");
-            return (Criteria) this;
-        }
-
-        public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("name not between", value1, value2, "name");
-            return (Criteria) this;
-        }
-
         public Criteria andRoleIsNull() {
             addCriterion("role is null");
             return (Criteria) this;
@@ -431,66 +361,6 @@ public class UserDOExample {
 
         public Criteria andRoleNotBetween(Integer value1, Integer value2) {
             addCriterion("role not between", value1, value2, "role");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectIsNull() {
-            addCriterion("last_project is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectIsNotNull() {
-            addCriterion("last_project is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectEqualTo(Integer value) {
-            addCriterion("last_project =", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectNotEqualTo(Integer value) {
-            addCriterion("last_project <>", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectGreaterThan(Integer value) {
-            addCriterion("last_project >", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectGreaterThanOrEqualTo(Integer value) {
-            addCriterion("last_project >=", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectLessThan(Integer value) {
-            addCriterion("last_project <", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectLessThanOrEqualTo(Integer value) {
-            addCriterion("last_project <=", value, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectIn(List<Integer> values) {
-            addCriterion("last_project in", values, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectNotIn(List<Integer> values) {
-            addCriterion("last_project not in", values, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectBetween(Integer value1, Integer value2) {
-            addCriterion("last_project between", value1, value2, "lastProject");
-            return (Criteria) this;
-        }
-
-        public Criteria andLastProjectNotBetween(Integer value1, Integer value2) {
-            addCriterion("last_project not between", value1, value2, "lastProject");
             return (Criteria) this;
         }
     }

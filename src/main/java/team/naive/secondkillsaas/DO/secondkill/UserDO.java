@@ -1,4 +1,4 @@
-package team.naive.secondkillsaas.DO;
+package team.naive.secondkillsaas.DO.secondkill;
 
 public class UserDO {
     private Integer id;
@@ -7,11 +7,15 @@ public class UserDO {
 
     private String password;
 
-    private String name;
-
     private Integer role;
 
-    private Integer lastProject;
+    public UserDO() {}
+
+    public UserDO(String username, String password, Integer role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 
     public Integer getId() {
         return id;
@@ -37,27 +41,11 @@ public class UserDO {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
     public Integer getRole() {
         return role;
     }
 
     public void setRole(Integer role) {
         this.role = role;
-    }
-
-    public Integer getLastProject() {
-        return lastProject;
-    }
-
-    public void setLastProject(Integer lastProject) {
-        this.lastProject = lastProject;
     }
 }

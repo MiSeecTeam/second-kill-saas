@@ -38,7 +38,7 @@
 
         <table tableName="order" domainObjectName="OrderDO" mapperName="OrderMapper"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
-        <table tableName="secondkill..user" domainObjectName="UserDO" mapperName="AccountMapper"
+        <table catalog="secondkill" tableName="user" domainObjectName="UserDO" mapperName="AccountMapper"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
    </context>
 </generatorConfiguration>

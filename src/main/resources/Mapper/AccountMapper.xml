@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="team.naive.secondkillsaas.Mapper.AccountMapper">
-  <resultMap id="BaseResultMap" type="team.naive.secondkillsaas.DO.UserDO">
+  <resultMap id="BaseResultMap" type="team.naive.secondkillsaas.DO.secondkill.UserDO">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="role" jdbcType="INTEGER" property="role" />
-    <result column="last_project" jdbcType="INTEGER" property="lastProject" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -39,16 +37,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, password, name, role, last_project
+    id, username, password, role
   </sql>
-  <select id="selectByExample" parameterType="team.naive.secondkillsaas.DO.UserDOExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="team.naive.secondkillsaas.DO.secondkill.UserDOExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'false' as QUERYID,
     <include refid="Base_Column_List" />
-    from user
+    from secondkill..user
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -59,23 +57,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from user
+    from secondkill..user
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from user
+    delete from secondkill..user
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="team.naive.secondkillsaas.DO.UserDO">
-    insert into user (id, username, password, 
-      name, role, last_project
-      )
+  <insert id="insert" parameterType="team.naive.secondkillsaas.DO.secondkill.UserDO">
+    insert into secondkill..user (id, username, password, 
+      role)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, #{lastProject,jdbcType=INTEGER}
-      )
+      #{role,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.UserDO">
-    insert into user
+  <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.secondkill.UserDO">
+    insert into secondkill..user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -86,14 +82,8 @@
       <if test="password != null">
         password,
       </if>
-      <if test="name != null">
-        name,
-      </if>
       <if test="role != null">
         role,
-      </if>
-      <if test="lastProject != null">
-        last_project,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -106,19 +96,13 @@
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
       <if test="role != null">
         #{role,jdbcType=INTEGER},
       </if>
-      <if test="lastProject != null">
-        #{lastProject,jdbcType=INTEGER},
-      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="team.naive.secondkillsaas.DO.UserDO">
-    update user
+  <update id="updateByPrimaryKeySelective" parameterType="team.naive.secondkillsaas.DO.secondkill.UserDO">
+    update secondkill..user
     <set>
       <if test="username != null">
         username = #{username,jdbcType=VARCHAR},
@@ -126,25 +110,17 @@
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
       </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
-      </if>
       <if test="role != null">
         role = #{role,jdbcType=INTEGER},
-      </if>
-      <if test="lastProject != null">
-        last_project = #{lastProject,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="team.naive.secondkillsaas.DO.UserDO">
-    update user
+  <update id="updateByPrimaryKey" parameterType="team.naive.secondkillsaas.DO.secondkill.UserDO">
+    update secondkill..user
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      role = #{role,jdbcType=INTEGER},
-      last_project = #{lastProject,jdbcType=INTEGER}
+      role = #{role,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -1,8 +1,8 @@
 package team.naive.secondkillsaas.Mapper;
 
 import java.util.List;
-import team.naive.secondkillsaas.DO.UserDO;
-import team.naive.secondkillsaas.DO.UserDOExample;
+import team.naive.secondkillsaas.DO.secondkill.UserDO;
+import team.naive.secondkillsaas.DO.secondkill.UserDOExample;
 
 public interface AccountMapper {
     int deleteByPrimaryKey(Integer id);
