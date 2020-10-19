@@ -78,6 +78,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+<!--		fastjson依赖-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.73</version>
+		</dependency>
+
+		<!--        swagger的两个包，方便测试-->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

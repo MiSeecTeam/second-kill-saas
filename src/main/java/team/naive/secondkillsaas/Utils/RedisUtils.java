@@ -6,6 +6,7 @@ package team.naive.secondkillsaas.Utils;
  * @Date 2020/9/25
  */
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,23 @@ public class RedisUtils {
 
     public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+
+
+    /**
+     *
+     * @param key
+     * @return 如果原本是空的就返回1，表示设置成功；否则返回0
+     */
+    public boolean setIfAbsent(String key){
+        boolean setSuccess;
+        try{
+            setSuccess =  redisTemplate.opsForValue().setIfAbsent(key, key, 3, TimeUnit.SECONDS);
+        }catch (Exception e){
+            e.printStackTrace();
+            setSuccess = false;
+        }
+        return setSuccess;
     }
 
     /**
@@ -221,7 +239,7 @@ public class RedisUtils {
      * @param map 对应多个键值
      * @return true 成功 false 失败
      */
-    public boolean hmset(String key, Map<String,Object> map){
+    public boolean hmset(String key, Map<Object,Object> map){
         try {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
