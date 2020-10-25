@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.naive.secondkillsaas.Mapper.SkuQuantityMapper">
+    <!--<parameterMap id="OrderParameterMap" type="team.naive.secondkillsaas.DO.OrderDO">-->
+        <!--<parameter property="" resultMap="BaseResultMap" />-->
+    <!--</parameterMap>-->
+    <update id="decSkuQuantity">
+        update sku_quantity
+        set amount = case when #{amount, jdbcType=BIGINT} >= 0 then #{amount} else 0 end
+        where sku_id = #{skuId, jdbcType=BIGINT}
+    </update>
+</mapper>

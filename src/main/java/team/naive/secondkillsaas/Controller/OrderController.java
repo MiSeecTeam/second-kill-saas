@@ -25,4 +25,9 @@ public class OrderController {
         responseVO.setContent(orderService.getOrderDetail(userId));
         return  responseVO;
     }
+
+    @PostMapping("/pay")
+    public ResponseVO payForOrder(@RequestParam Long orderId) {
+        return orderService.payForOrder(orderId);
+    }
 }
