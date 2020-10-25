@@ -45,15 +45,11 @@ public class KillController {
         killDTO.setUserId(1L);
         killDTO.setTransactionId(123L);
 
-        Boolean res1 = false;
         try {
-            res1 = killService.killItem(killDTO);
+            res = killService.killItem(killDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        res.setSuccess(true);
-        res.setContent(res1);
-
         return res;
     }
 
