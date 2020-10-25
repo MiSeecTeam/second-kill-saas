@@ -2,6 +2,7 @@ package team.naive.secondkillsaas.Biz;
 
 
 import team.naive.secondkillsaas.DTO.KillDTO;
+import team.naive.secondkillsaas.VO.ResponseVO;
 
 /**
  * @Description
@@ -10,6 +11,6 @@ import team.naive.secondkillsaas.DTO.KillDTO;
  */
 public interface KillService {
 
-    Boolean killItem(KillDTO killDTO) throws Exception;
+    ResponseVO killItem(KillDTO killDTO) throws Exception;
 
 }
