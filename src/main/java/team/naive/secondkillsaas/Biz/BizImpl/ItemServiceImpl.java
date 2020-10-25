@@ -15,7 +15,7 @@ import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.ItemDetailDOExample;
 import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
-import team.naive.secondkillsaas.Redis.RedisMapper;
+import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 
@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     private static final Logger log= LoggerFactory.getLogger(ItemServiceImpl.class);
 
     @Autowired
-    private RedisMapper redisMapper;
+    private RedisService redisService;
 
     @Autowired
     private ItemDetailMapper itemDetailMapper;
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDetailBO getItemDetail(Long id) {
         ItemDetailBO itemDetailBO = new ItemDetailBO();
-        BeanUtils.copyProperties(redisMapper.getItemDetail(id), itemDetailBO);
+        BeanUtils.copyProperties(redisService.getItemDetail(id), itemDetailBO);
         return itemDetailBO;
     }
 
@@ -71,14 +71,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public SkuDetailBO getSkuDetail(Long id) {
         SkuDetailBO skuDetailBO = new SkuDetailBO();
-        BeanUtils.copyProperties(redisMapper.getSkuDetail(id), skuDetailBO);
+        BeanUtils.copyProperties(redisService.getSkuDetail(id), skuDetailBO);
         return skuDetailBO;
     }
 
     @Override
     public SkuQuantityBO getSkuQuantity(Long id) {
         SkuQuantityBO skuQuantityBO = new SkuQuantityBO();
-        BeanUtils.copyProperties(redisMapper.getSkuQuantity(id), skuQuantityBO);
+        BeanUtils.copyProperties(redisService.getSkuQuantity(id), skuQuantityBO);
         return skuQuantityBO;
     }
 

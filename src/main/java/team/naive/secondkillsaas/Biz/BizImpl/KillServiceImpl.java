@@ -11,10 +11,12 @@ import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.KillService;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.DTO.KillDTO;
-import team.naive.secondkillsaas.Redis.RedisMapper;
+import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 import team.naive.secondkillsaas.Security.UserValidation;
 import team.naive.secondkillsaas.Utils.RedisUtils;
+
+import java.util.Date;
 
 /**
  * @Description
@@ -40,7 +42,7 @@ public class KillServiceImpl implements KillService {
     private RedisUtils redisUtils;
 
     @Autowired
-    private RedisMapper redisMapper;
+    private RedisService redisService;
 
     // todo: 日志
     private static final Logger log= LoggerFactory.getLogger(KillServiceImpl.class);
@@ -71,18 +73,35 @@ public class KillServiceImpl implements KillService {
                 执行业务逻辑
                  */
                 //从redis中取出SkuQuantityDO对象
-                SkuQuantityDO skuQuantityDO = redisMapper.getKillSkuQuantity(skuId);
+                SkuQuantityDO skuQuantityDO = redisService.getKillSkuQuantity(skuId);
                 long amount = skuQuantityDO.getAmount();
-                if(amount>0){//有库存，抢购成功
-                    amount--;
-                    skuQuantityDO.setAmount(amount);
-                    //放回redis中去
-                    redisMapper.saveKillSkuQuantity(skuQuantityDO);
-                    System.out.println("顾客"+userId+"抢购商品"+skuId+"成功");
-                    result = true;
+                if(amount>0){//有库存
+                    //获取时间
+                    Date arrival = new Date();
+                    Date start_time = skuQuantityDO.getStartTime();
+                    Date end_time = skuQuantityDO.getEndTime();
+                    //如果已经开始秒杀
+                    if(arrival.after(start_time) && arrival.before(end_time)){
+                        amount--;
+                        skuQuantityDO.setAmount(amount);
+                        skuQuantityDO.setGmtModified(new Date());
+                        //放回redis中去
+                        redisService.saveKillSkuQuantity(skuQuantityDO);
+                        System.out.println("顾客"+userId+"抢购商品"+skuId+"，成功。");
+                        result = true;
+                        /**
+                         * 更新 用于读的skuQuantity
+                         */
+                        SkuQuantityDO read = redisService.getSkuQuantity(skuId);
+                        read.setAmount(amount);
+                        redisService.saveSkuQuantity(read);
+                    }
+                    else{
+                        System.out.println("顾客"+userId+"抢购商品"+skuId+"，该商品还未开始秒杀，失败。");
+                    }
                 }
                 else{//库存已经没了，抢购失败
-                    System.out.println("顾客"+userId+"抢购商品"+skuId+"失败，已经抢完");
+                    System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败，已经抢完。");
                     result = false;
                 }
 

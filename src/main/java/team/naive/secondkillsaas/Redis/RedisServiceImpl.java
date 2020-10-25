@@ -17,7 +17,7 @@ import java.util.Map;
  * @description:
  */
 @Component
-public class RedisMapperImpl implements RedisMapper {
+public class RedisServiceImpl implements RedisService {
     public static final String ITEM_DETAIL_HASH = "ITEM_DETAIL_HASH";
     public static final String SKU_DETAIL_HASH = "SKU_DETAIL_HASH";
     public static final String SKU_QUANTITY_HASH = "SKU_QUANTITY_HASH";
@@ -32,7 +32,7 @@ public class RedisMapperImpl implements RedisMapper {
     @Override
     public ItemDetailDO getItemDetail(long itemId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hget(SKU_DETAIL_HASH, String.valueOf(itemId))),
+                JSONObject.toJSONString(redisUtils.hget(ITEM_DETAIL_HASH, String.valueOf(itemId))),
                 ItemDetailDO.class);
     }
 

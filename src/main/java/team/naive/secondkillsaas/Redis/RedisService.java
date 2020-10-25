@@ -11,7 +11,7 @@ import team.naive.secondkillsaas.DO.SkuQuantityDO;
  * @date: 2020/10/19
  * @description:
  */
-public interface RedisMapper {
+public interface RedisService {
 
     /*
     以下是把mysql数据库中的三种数据缓存到redis中的6个方法
