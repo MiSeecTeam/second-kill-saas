@@ -10,7 +10,7 @@ import team.naive.secondkillsaas.Config.RabbitMQConfig;
 import team.naive.secondkillsaas.DO.OrderDO;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.OrderMapper;
-import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
+import team.naive.secondkillsaas.Mapper.SkuQuantityMapperExt;
 
 /**
  * @ Description
@@ -26,14 +26,14 @@ public class OrderProcessListener {
     private OrderMapper orderMapper;
 
     @Autowired
-    private SkuQuantityMapper skuQuantityMapper;
+    private SkuQuantityMapperExt skuQuantityMapperExt;
 
     @RabbitHandler
     public void processOrder(OrderDO orderDO){
         //减库存
         Long skuId = orderDO.getSkuId();
         Long amount = orderDO.getAmount();
-        skuQuantityMapper.decSkuQuantity(skuId, amount);
+        skuQuantityMapperExt.decSkuQuantity(skuId, amount);
 
         //完成订单
         orderDO.setFinished(Boolean.TRUE);

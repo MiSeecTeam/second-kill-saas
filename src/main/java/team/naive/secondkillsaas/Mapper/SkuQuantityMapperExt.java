@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
  * @ Author YangYicun
  * @ Date 2020/10/22 21:06
  */
-public interface SkuQuantityMapperExt {
+public interface SkuQuantityMapperExt extends SkuQuantityMapper {
 
     /**
      * 订单完成后减库存

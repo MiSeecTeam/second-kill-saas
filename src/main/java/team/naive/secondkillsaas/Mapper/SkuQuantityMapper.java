@@ -4,7 +4,7 @@ import java.util.List;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.DO.SkuQuantityDOExample;
 
-public interface SkuQuantityMapper extends SkuQuantityMapperExt {
+public interface SkuQuantityMapper {
     int deleteByPrimaryKey(Long skuId);
 
     int insert(SkuQuantityDO record);
