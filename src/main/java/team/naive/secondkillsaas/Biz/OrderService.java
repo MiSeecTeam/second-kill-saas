@@ -1,6 +1,7 @@
 package team.naive.secondkillsaas.Biz;
 
 import team.naive.secondkillsaas.BO.*;
+import team.naive.secondkillsaas.VO.ResponseVO;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface OrderService {
     List<OrderBO> listOrders(Long userId);
 
     OrderDetailBO getOrderDetail(Long orderId);
+
+    ResponseVO payForOrder(Long orderId);
 }

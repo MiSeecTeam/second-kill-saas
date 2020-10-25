@@ -49,7 +49,7 @@
     </if>
     'false' as QUERYID,
     <include refid="Base_Column_List" />
-    from order
+    from user_order
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -60,15 +60,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from order
+    from user_order
     where order_id = #{orderId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from order
+    delete from user_order
     where order_id = #{orderId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="team.naive.secondkillsaas.DO.OrderDO">
-    insert into order (order_id, gmt_created, gmt_modified, 
+    insert into user_order (order_id, gmt_created, gmt_modified, 
       is_deleted, sku_id, amount, 
       finished)
     values (#{orderId,jdbcType=BIGINT}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
@@ -76,7 +76,7 @@
       #{finished,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.OrderDO">
-    insert into order
+    insert into user_order
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
         order_id,
@@ -125,7 +125,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="team.naive.secondkillsaas.DO.OrderDO">
-    update order
+    update user_order
     <set>
       <if test="gmtCreated != null">
         gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
@@ -149,7 +149,7 @@
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="team.naive.secondkillsaas.DO.OrderDO">
-    update order
+    update user_order
     set gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       is_deleted = #{isDeleted,jdbcType=BIT},
