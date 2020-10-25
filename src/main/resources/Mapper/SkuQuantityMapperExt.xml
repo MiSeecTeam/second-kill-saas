@@ -6,7 +6,7 @@
     <!--</parameterMap>-->
     <update id="decSkuQuantity">
         update sku_quantity
-        set amount = case when #{amount, jdbcType=BIGINT} >= 0 then #{amount} else 0 end
+        set amount = case when (amount - #{amount, jdbcType=BIGINT}) >= 0 then (amount - #{amount, jdbcType=BIGINT}) else 0 end
         where sku_id = #{skuId, jdbcType=BIGINT}
     </update>
 </mapper>

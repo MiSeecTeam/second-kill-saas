@@ -3,6 +3,7 @@ package team.naive.secondkillsaas;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import team.naive.secondkillsaas.BO.OrderBO;
 import team.naive.secondkillsaas.Biz.OrderService;
 
 /**
@@ -19,7 +20,7 @@ public class RabbitMQTest {
     @Test
     void test1(){
         Long orderId = 10001L;
-        orderService.payForOrder(orderId);
-
+        OrderBO orderBO = (OrderBO) orderService.payForOrder(orderId).getContent();
+//        System.out.println(orderBO);
     }
 }

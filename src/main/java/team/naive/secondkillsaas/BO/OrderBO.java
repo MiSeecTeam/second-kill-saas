@@ -2,6 +2,7 @@ package team.naive.secondkillsaas.BO;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 
 @Data
-public class OrderBO {
+public class OrderBO implements Serializable {
 
     private Long orderId;
 

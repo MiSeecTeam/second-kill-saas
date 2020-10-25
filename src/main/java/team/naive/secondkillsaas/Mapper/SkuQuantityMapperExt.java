@@ -1,6 +1,7 @@
 package team.naive.secondkillsaas.Mapper;
 
-import org.springframework.data.repository.query.Param;
+//import org.springframework.data.repository.query.Param;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @ Description
