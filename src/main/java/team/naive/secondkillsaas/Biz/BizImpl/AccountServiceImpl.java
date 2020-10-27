@@ -3,8 +3,8 @@ package team.naive.secondkillsaas.Biz.BizImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.naive.secondkillsaas.Biz.AccountService;
-import team.naive.secondkillsaas.DO.secondkill.UserDO;
-import team.naive.secondkillsaas.DO.secondkill.UserDOExample;
+import team.naive.secondkillsaas.DO.UserDO;
+import team.naive.secondkillsaas.DO.UserDOExample;
 import team.naive.secondkillsaas.Mapper.AccountMapper;
 import team.naive.secondkillsaas.VO.BriefUserVO;
 import team.naive.secondkillsaas.VO.ResponseVO;
@@ -19,10 +19,11 @@ import java.util.List;
  */
 @Service
 public class AccountServiceImpl implements AccountService {
+
     private final static String ACCOUNT_EXIST = "账号已存在";
+
     @Autowired
     private AccountMapper accountMapper;
-
 
     @Override
     public ResponseVO registerAccount(UserForm userForm) {
@@ -40,14 +41,11 @@ public class AccountServiceImpl implements AccountService {
         UserDOExample example = new UserDOExample();
         UserDOExample.Criteria criteria = example.createCriteria();
         criteria.andUsernameEqualTo(userForm.getUsername());
-        UserDO user = accountMapper.selectByExample(example).get(0);
-        if (null == user || !user.getPassword().equals(userForm.getPassword())) {
-            System.out.println(userForm.getUsername());
-            System.out.println(userForm.getPassword());
-            System.out.println(user.getPassword());
+        List<UserDO> users = accountMapper.selectByExample(example);
+        if (users.size() == 0 || !users.get(0).getPassword().equals(userForm.getPassword())) {
             return null;
         }
-        return new UserVO(user);
+        return new UserVO(users.get(0));
     }
 
     @Override

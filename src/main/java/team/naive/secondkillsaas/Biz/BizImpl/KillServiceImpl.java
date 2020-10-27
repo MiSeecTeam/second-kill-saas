@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.KillService;
+import team.naive.secondkillsaas.Biz.OrderServiceForBiz;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.DTO.KillDTO;
+import team.naive.secondkillsaas.DTO.OrderFormDTO;
 import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 import team.naive.secondkillsaas.Security.UserValidation;
@@ -44,6 +46,9 @@ public class KillServiceImpl implements KillService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private OrderServiceForBiz orderServiceForBiz;
 
     // todo: 日志
     private static final Logger log= LoggerFactory.getLogger(KillServiceImpl.class);
@@ -116,13 +121,24 @@ public class KillServiceImpl implements KillService {
                     skuQuantityDO.setGmtModified(new Date());
                     redisService.saveKillSkuQuantity(skuQuantityDO);
                     System.out.println("顾客"+userId+"抢购商品"+skuId+"，成功。");
-                    responseVO.setContent(true);
                     /**
                      * 更新 用于读的skuQuantity
                      */
                     SkuQuantityDO read = redisService.getSkuQuantity(skuId);
                     read.setAmount(amount);
                     redisService.saveSkuQuantity(read);
+                    // 创建订单
+                    OrderFormDTO orderFormDTO = new OrderFormDTO();
+                    orderFormDTO.setSkuId(skuId);
+                    orderFormDTO.setUserId(userId);
+                    ResponseVO orderResponse = orderServiceForBiz.createOrder(orderFormDTO);
+                    if (orderResponse.getSuccess()) {
+                        responseVO.setContent(true);
+                        responseVO.setMessage("");
+                    } else {
+                        responseVO.setContent(false);
+                        responseVO.setMessage(orderResponse.getMessage());
+                    }
                 }
                 else{//库存已经没了，抢购失败
                     System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败。已经抢完。");

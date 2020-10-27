@@ -1,6 +1,10 @@
 package team.naive.secondkillsaas.BO;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import team.naive.secondkillsaas.DO.ItemDetailDO;
+import team.naive.secondkillsaas.DO.OrderDO;
+import team.naive.secondkillsaas.DO.SkuDetailDO;
 
 import java.util.Date;
 
@@ -11,28 +15,23 @@ import java.util.Date;
  */
 
 @Data
-public class OrderDetailBO {
+@EqualsAndHashCode(callSuper = true)
+public class OrderDetailBO extends OrderBO {
 
-    private Long orderId;
-
-    private Date gmtCreated;
-
-    private Date gmtModified;
-
-    private Boolean isDeleted;
-
-    private Long skuId;
+    public OrderDetailBO(OrderDO orderDO, SkuDetailDO skuDetailDO, ItemDetailDO itemDetailDO) {
+        super(orderDO);
+        this.skuName = skuDetailDO.getSkuName();
+        this.skuDesc = skuDetailDO.getSkuDesc();
+        this.itemDesc = itemDetailDO.getItemDesc();
+        this.itemName = itemDetailDO.getItemName();
+    }
 
     private String skuName;
 
     private String skuDesc;
 
-    private Long amount;
-
     private String itemName;
 
     private String itemDesc;
-
-    private Boolean finished;
 
 }

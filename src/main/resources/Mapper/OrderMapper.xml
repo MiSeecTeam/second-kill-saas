@@ -9,6 +9,7 @@
     <result column="sku_id" jdbcType="BIGINT" property="skuId" />
     <result column="amount" jdbcType="BIGINT" property="amount" />
     <result column="finished" jdbcType="BIT" property="finished" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -40,7 +41,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    order_id, gmt_created, gmt_modified, is_deleted, sku_id, amount, finished
+    order_id, gmt_created, gmt_modified, is_deleted, sku_id, amount, finished, user_id
   </sql>
   <select id="selectByExample" parameterType="team.naive.secondkillsaas.DO.OrderDOExample" resultMap="BaseResultMap">
     select
@@ -70,10 +71,10 @@
   <insert id="insert" parameterType="team.naive.secondkillsaas.DO.OrderDO">
     insert into user_order (order_id, gmt_created, gmt_modified, 
       is_deleted, sku_id, amount, 
-      finished)
+      finished, user_id)
     values (#{orderId,jdbcType=BIGINT}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{isDeleted,jdbcType=BIT}, #{skuId,jdbcType=BIGINT}, #{amount,jdbcType=BIGINT}, 
-      #{finished,jdbcType=BIT})
+      #{finished,jdbcType=BIT}, #{userId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.OrderDO">
     insert into user_order
@@ -99,6 +100,9 @@
       <if test="finished != null">
         finished,
       </if>
+      <if test="userId != null">
+        user_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
@@ -121,6 +125,9 @@
       </if>
       <if test="finished != null">
         #{finished,jdbcType=BIT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -145,6 +152,9 @@
       <if test="finished != null">
         finished = #{finished,jdbcType=BIT},
       </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
     </set>
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
@@ -155,7 +165,8 @@
       is_deleted = #{isDeleted,jdbcType=BIT},
       sku_id = #{skuId,jdbcType=BIGINT},
       amount = #{amount,jdbcType=BIGINT},
-      finished = #{finished,jdbcType=BIT}
+      finished = #{finished,jdbcType=BIT},
+      user_id = #{userId,jdbcType=BIGINT}
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>

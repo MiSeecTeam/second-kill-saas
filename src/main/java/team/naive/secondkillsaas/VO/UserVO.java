@@ -1,6 +1,6 @@
 package team.naive.secondkillsaas.VO;
 
-import team.naive.secondkillsaas.DO.secondkill.UserDO;
+import team.naive.secondkillsaas.DO.UserDO;
 
 /**
  * @author wangyuxiao
@@ -23,7 +23,7 @@ public class UserVO {
     public UserVO(UserDO user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.password = user.getPassword();
+        this.password = null;
         this.role = user.getRole();
     }
 

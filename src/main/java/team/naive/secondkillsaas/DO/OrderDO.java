@@ -17,6 +17,8 @@ public class OrderDO {
 
     private Boolean finished;
 
+    private Long userId;
+
     public Long getOrderId() {
         return orderId;
     }
@@ -71,5 +73,13 @@ public class OrderDO {
 
     public void setFinished(Boolean finished) {
         this.finished = finished;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

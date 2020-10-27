@@ -1,4 +1,4 @@
-package team.naive.secondkillsaas.DO.secondkill;
+package team.naive.secondkillsaas.DO;
 
 public class UserDO {
     private Integer id;

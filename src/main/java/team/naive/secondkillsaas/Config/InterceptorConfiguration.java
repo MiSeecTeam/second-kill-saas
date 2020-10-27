@@ -13,7 +13,9 @@ import team.naive.secondkillsaas.Interceptor.SessionInterceptor;
 @Configuration
 public class InterceptorConfiguration implements WebMvcConfigurer {
 
-    // 不同的角色设置不同的SessionKey
+    /**
+     * 不同的角色设置不同的SessionKey
+     */
     public final static String SESSION_KEY = "user";
     public final static String ISADMIN= "isAdmin";
     public final static String ISUSE = "isUse";

@@ -13,16 +13,20 @@ import org.springframework.stereotype.Service;
 import team.naive.secondkillsaas.BO.*;
 import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.OrderService;
+import team.naive.secondkillsaas.Biz.OrderServiceForBiz;
 import team.naive.secondkillsaas.Config.RabbitMQConfig;
-import team.naive.secondkillsaas.DO.ItemDetailDO;
-import team.naive.secondkillsaas.DO.ItemDetailDOExample;
-import team.naive.secondkillsaas.DO.OrderDO;
+import team.naive.secondkillsaas.DO.*;
+import team.naive.secondkillsaas.DTO.OrderFormDTO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
 import team.naive.secondkillsaas.Mapper.OrderMapper;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
+import team.naive.secondkillsaas.Redis.RedisService;
+import team.naive.secondkillsaas.Utils.RedisUtils;
 import team.naive.secondkillsaas.VO.ResponseVO;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +37,7 @@ import java.util.stream.Collectors;
  * @Date 2020/9/22
  */
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
 
     private static final Logger log= LoggerFactory.getLogger(OrderServiceImpl.class);
 
@@ -43,21 +47,89 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private SkuDetailMapper skuDetailMapper;
+
+    @Autowired
+    private ItemDetailMapper itemDetailMapper;
+
     private static final String ORDER_CANCELED_INFO = "订单已被取消";
+    private static final String ORDER_CREATE_FAILURE = "创建订单失败";
+    private static final String ORDER_CANCEL_FAILURE = "取消订单失败";
+    private static final String ORDER_ID_NOT_EXIST = "订单号不存在";
+
     @Override
     public List<OrderBO> listOrders(Long userId){
-        return null;
-    };
+        if (userId == null) {
+            return null;
+        }
+        OrderDOExample example = new OrderDOExample();
+        OrderDOExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        List<OrderDO> orderDOList = orderMapper.selectByExample(example);
+        List<OrderBO> orderBOList = new ArrayList<>();
+        for (OrderDO order: orderDOList) {
+            orderBOList.add(new OrderBO(order));
+        }
+        return orderBOList;
+    }
 
     @Override
     public OrderDetailBO getOrderDetail(Long orderId){
-        return null;
-    };
+        if (orderId == null) {
+            return null;
+        }
+
+        OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
+        long skuId = orderDO.getSkuId();
+        SkuDetailDO skuDetailDO = redisService.getSkuDetail(skuId);
+        if (skuDetailDO == null) {
+            skuDetailDO = skuDetailMapper.selectByPrimaryKey(skuId);
+            if (skuDetailDO == null) {
+                return null;
+            }
+        }
+        long itemId = skuDetailDO.getItemId();
+        ItemDetailDO itemDetailDO = redisService.getItemDetail(itemId);
+        if (itemDetailDO == null) {
+            itemDetailDO = itemDetailMapper.selectByPrimaryKey(itemId);
+            if (itemDetailDO == null) {
+                return null;
+            }
+        }
+        return new OrderDetailBO(orderDO, skuDetailDO, itemDetailDO);
+    }
+
+    @Override
+    public ResponseVO cancelOrder(Long orderId) {
+        if (orderId == null) {
+            return null;
+        }
+
+        try {
+            OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
+            orderDO.setIsDeleted(true);
+            orderMapper.updateByPrimaryKey(orderDO);
+            SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(orderDO.getSkuId());
+            long amount = skuQuantityDO.getAmount();
+            amount++;
+            skuQuantityDO.setAmount(amount);
+            redisService.saveSkuQuantity(skuQuantityDO);
+            return ResponseVO.buildSuccess();
+        } catch (Exception e) {
+            return ResponseVO.buildFailure(ORDER_CANCEL_FAILURE);
+        }
+
+    }
 
     @Override
     public ResponseVO payForOrder(Long orderId){
         OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
-        if(orderDO.getIsDeleted()){//若订单已被取消
+        // 若订单已被取消
+        if(orderDO.getIsDeleted()){
             return ResponseVO.buildFailure(ORDER_CANCELED_INFO);
         }
 
@@ -68,6 +140,27 @@ public class OrderServiceImpl implements OrderService {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, orderBO);
 
         return ResponseVO.buildSuccess(orderBO);
+    }
+
+    @Override
+    public ResponseVO createOrder(OrderFormDTO orderFormDTO) {
+        OrderDO orderDO = new OrderDO();
+        // 目前抢购数量默认为1
+        orderDO.setAmount(1L);
+        orderDO.setFinished(false);
+        orderDO.setGmtCreated(new Date());
+        orderDO.setGmtModified(new Date());
+        orderDO.setSkuId(orderFormDTO.getSkuId());
+        orderDO.setUserId(orderFormDTO.getUserId());
+        orderDO.setIsDeleted(false);
+
+        try {
+            long orderId = orderMapper.insert(orderDO);
+            orderDO.setOrderId(orderId);
+            return ResponseVO.buildSuccess(new OrderBO(orderDO));
+        } catch (Exception e) {
+            return ResponseVO.buildFailure(ORDER_CREATE_FAILURE);
+        }
     }
 
 }

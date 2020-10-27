@@ -25,7 +25,7 @@ public class AccountController {
     private AccountServiceImpl accountService;
 
     @PostMapping("/login")
-    public ResponseVO login(@ModelAttribute UserForm userForm, HttpSession session) {
+    public ResponseVO login(@RequestBody UserForm userForm, HttpSession session) {
         UserVO user = accountService.login(userForm);
         if (user == null) {
             return ResponseVO.buildFailure(ACCOUNT_INFO_ERROR);
@@ -41,7 +41,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseVO registerAccount(@ModelAttribute UserForm userForm) {
+    public ResponseVO registerAccount(@RequestBody UserForm userForm) {
         return accountService.registerAccount(userForm);
     }
 

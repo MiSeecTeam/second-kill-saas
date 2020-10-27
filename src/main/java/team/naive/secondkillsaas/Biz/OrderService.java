@@ -16,5 +16,7 @@ public interface OrderService {
 
     OrderDetailBO getOrderDetail(Long orderId);
 
+    ResponseVO cancelOrder(Long orderId);
+
     ResponseVO payForOrder(Long orderId);
 }

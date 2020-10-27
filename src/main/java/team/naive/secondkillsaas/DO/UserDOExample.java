@@ -1,4 +1,4 @@
-package team.naive.secondkillsaas.DO.secondkill;
+package team.naive.secondkillsaas.DO;
 
 import java.util.ArrayList;
 import java.util.List;
