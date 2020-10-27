@@ -104,6 +104,21 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
     }
 
     @Override
+    public OrderBO getOrderDetail(Long userId, Long skuId) {
+        if (userId == null || skuId == null) {
+            return null;
+        }
+        OrderDOExample example = new OrderDOExample();
+        OrderDOExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId).andSkuIdEqualTo(skuId);
+        List<OrderDO> orderDOList = orderMapper.selectByExample(example);
+        if (orderDOList.size() == 0) {
+            return null;
+        }
+        return new OrderBO(orderDOList.get(0));
+    }
+
+    @Override
     public ResponseVO cancelOrder(Long orderId) {
         if (orderId == null) {
             return null;

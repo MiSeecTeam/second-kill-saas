@@ -32,6 +32,11 @@ public class OrderController {
         return ResponseVO.buildSuccess(orderService.getOrderDetail(orderId));
     }
 
+    @GetMapping("/getOrderDetailBak")
+    public ResponseVO getOrderDetailBak(@RequestParam Long userId, @RequestParam Long skuId) {
+        return ResponseVO.buildSuccess(orderService.getOrderDetail(userId, skuId));
+    }
+
     @GetMapping("/cancelOrder")
     public ResponseVO cancelOrder(@RequestParam Long orderId) {
         return orderService.cancelOrder(orderId);
