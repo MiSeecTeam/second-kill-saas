@@ -27,16 +27,13 @@ public class KillController {
         killDTO.setUserId(killForm.getUserId());
         killDTO.setSkuId(killForm.getSkuId());
 
-        Boolean res1 = false;
+        ResponseVO res = new ResponseVO();
+
         try {
-            res1 = killService.killItem(killDTO);
+            res = killService.killItem(killDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ResponseVO res = new ResponseVO();
-        res.setSuccess(true);
-        res.setContent(res1);
         return res;
     }
 
@@ -48,15 +45,11 @@ public class KillController {
         killDTO.setUserId(1L);
         killDTO.setTransactionId(123L);
 
-        Boolean res1 = false;
         try {
-            res1 = killService.killItem(killDTO);
+            res = killService.killItem(killDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        res.setSuccess(true);
-        res.setContent(res1);
-
         return res;
     }
 

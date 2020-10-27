@@ -11,10 +11,13 @@ import team.naive.secondkillsaas.Biz.ItemService;
 import team.naive.secondkillsaas.Biz.KillService;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.DTO.KillDTO;
-import team.naive.secondkillsaas.Redis.RedisMapper;
+import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 import team.naive.secondkillsaas.Security.UserValidation;
 import team.naive.secondkillsaas.Utils.RedisUtils;
+import team.naive.secondkillsaas.VO.ResponseVO;
+
+import java.util.Date;
 
 /**
  * @Description
@@ -40,29 +43,33 @@ public class KillServiceImpl implements KillService {
     private RedisUtils redisUtils;
 
     @Autowired
-    private RedisMapper redisMapper;
+    private RedisService redisService;
 
     // todo: 日志
     private static final Logger log= LoggerFactory.getLogger(KillServiceImpl.class);
 
     @Override
-    public Boolean killItem(@RequestBody KillDTO killDTO) throws Exception {
+    public ResponseVO killItem(@RequestBody KillDTO killDTO) throws Exception {
+        ResponseVO responseVO = new ResponseVO();
         Long userId = killDTO.getUserId(), skuId = killDTO.getSkuId();
         Long transactionId = killDTO.getTransactionId();
 
         // todo: 安全系统应该另外部署，此处应为一个远程调用
         if (!userValidation.isKillValid(userId)){
-            return false;
+            responseVO.setSuccess(false);
+            responseVO.setMessage("用户验证不通过");
+            return responseVO;
         }
 
-        Boolean result = false;
+        responseVO.setContent(false);
+        responseVO.setSuccess(true);
         // 目前为单系统所以简单上锁，todo：应对多系统问题
         // 尝试获取分布式锁，todo: 组件化封装+超时重试
         while(true){
             System.out.println("顾客"+userId+"正在尝试抢购商品"+skuId);
             if (tryLock(skuId)) {
                 // 幂等控制，todo：同样的，消除性能瓶颈+组件化
-                Boolean lastResult = tryGetLast(transactionId);
+                ResponseVO lastResult = tryGetLast(transactionId);
                 if (lastResult != null) {
                     return lastResult;
                 }
@@ -71,23 +78,60 @@ public class KillServiceImpl implements KillService {
                 执行业务逻辑
                  */
                 //从redis中取出SkuQuantityDO对象
-                SkuQuantityDO skuQuantityDO = redisMapper.getKillSkuQuantity(skuId);
+                SkuQuantityDO skuQuantityDO = redisService.getKillSkuQuantity(skuId);
+                Date start_time = skuQuantityDO.getStartTime();
+                Date end_time = skuQuantityDO.getEndTime();
+                Date arrival = new Date();
+
+                /**
+                 * 情况1：秒杀已结束
+                 * 不计入幂等
+                 */
+                if(arrival.after(end_time)){
+                    System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败。该商品已经结束秒杀。");
+                    responseVO.setMessage("秒杀已经结束。");
+                    return responseVO;
+                }
+
+                /**
+                 * 情况2：秒杀未开始
+                 * 不计入幂等
+                 */
+                if(arrival.after(start_time)){
+                    System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败。该商品还未开始秒杀。");
+                    responseVO.setMessage("秒杀尚未开始。");
+                    return responseVO;
+                }
+
+                /**
+                 * 情况3：正在进行秒杀
+                 * 计入幂等
+                 */
                 long amount = skuQuantityDO.getAmount();
-                if(amount>0){//有库存，抢购成功
+                //如果有库存的话，成功抢购。没库存的话，抢购失败。
+                if(amount>0){
                     amount--;
-                    skuQuantityDO.setAmount(amount);
                     //放回redis中去
-                    redisMapper.saveKillSkuQuantity(skuQuantityDO);
-                    System.out.println("顾客"+userId+"抢购商品"+skuId+"成功");
-                    result = true;
+                    skuQuantityDO.setAmount(amount);
+                    skuQuantityDO.setGmtModified(new Date());
+                    redisService.saveKillSkuQuantity(skuQuantityDO);
+                    System.out.println("顾客"+userId+"抢购商品"+skuId+"，成功。");
+                    responseVO.setContent(true);
+                    /**
+                     * 更新 用于读的skuQuantity
+                     */
+                    SkuQuantityDO read = redisService.getSkuQuantity(skuId);
+                    read.setAmount(amount);
+                    redisService.saveSkuQuantity(read);
                 }
                 else{//库存已经没了，抢购失败
-                    System.out.println("顾客"+userId+"抢购商品"+skuId+"失败，已经抢完");
-                    result = false;
+                    System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败。已经抢完。");
+                    responseVO.setContent(false);
+                    responseVO.setMessage("该商品已经抢完了");
                 }
 
                 // 保存执行记录，方便幂等控制
-                saveLast(transactionId, result);
+                saveLast(transactionId, responseVO);
 
                 // 分布式锁解锁
                 unLock(skuId);
@@ -95,7 +139,7 @@ public class KillServiceImpl implements KillService {
                 break;
             }
         }
-        return result;
+        return responseVO;
     }
 
     private boolean tryLock(Long skuId)  {
@@ -106,17 +150,17 @@ public class KillServiceImpl implements KillService {
         redisUtils.del(KILL_LOCK_PREFIX + skuId);
     }
 
-    // 虽然这里是Boolean，但其实最好是一个对象
-    private Boolean tryGetLast(Long transactionId)  {
+    // 获得上一次结果
+    private ResponseVO tryGetLast(Long transactionId)  {
         String key = KILL_IDEMPOTENT_PREFIX + transactionId;
         Object res = redisUtils.get(key);
         if (res != null) {
-            return (Boolean) res;
+            return (ResponseVO) res;
         }
         return null;
     }
 
-    private void saveLast(Long transactionId, Boolean last)  {
+    private void saveLast(Long transactionId, ResponseVO last)  {
         String key = KILL_IDEMPOTENT_PREFIX + transactionId;
         redisUtils.set(key, last);
     }

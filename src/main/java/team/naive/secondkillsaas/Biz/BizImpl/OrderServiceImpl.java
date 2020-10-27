@@ -61,9 +61,13 @@ public class OrderServiceImpl implements OrderService {
             return ResponseVO.buildFailure(ORDER_CANCELED_INFO);
         }
 
+        //转换成序列化对象BO，发送到消息队列，并用于返回前端
+        OrderBO orderBO = new OrderBO();
+        BeanUtils.copyProperties(orderDO, orderBO);
         //发送订单id至消息队列
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, orderDO);
-        return ResponseVO.buildSuccess(orderDO);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, orderBO);
+
+        return ResponseVO.buildSuccess(orderBO);
     }
 
 }
