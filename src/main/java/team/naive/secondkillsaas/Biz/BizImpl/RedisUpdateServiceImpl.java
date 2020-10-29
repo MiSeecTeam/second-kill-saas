@@ -2,6 +2,7 @@ package team.naive.secondkillsaas.Biz.BizImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import team.naive.secondkillsaas.BO.SkuKillBO;
 import team.naive.secondkillsaas.Biz.RedisUpdateService;
 import team.naive.secondkillsaas.DO.*;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
@@ -10,6 +11,7 @@ import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: lxc
@@ -72,8 +74,10 @@ public class RedisUpdateServiceImpl implements RedisUpdateService {
         for(SkuQuantityDO skuQuantityDO:skuQuantityDOS){
             //缓存用于读取的SkuQuantity
             redisService.saveSkuQuantity(skuQuantityDO);
-            //缓存用于杀价的SkuQuantity
-            redisService.saveKillSkuQuantity(skuQuantityDO);
+            //缓存用于秒杀的结构体信息
+            redisService.saveSkuKillBO(skuQuantityDO);
+            //缓存秒杀的桶
+            this.enableKillingSkuBucket(skuQuantityDO.getSkuId());
         }
         System.out.println("Update SkuQuantity total: "+skuQuantityDOS.size());
 
@@ -81,8 +85,12 @@ public class RedisUpdateServiceImpl implements RedisUpdateService {
     }
 
     @Override
-    public void enableKillingSku(long skuId) {
-        SkuQuantityDO skuQuantityDO = skuQuantityMapper.selectByPrimaryKey(skuId);
-        redisService.saveKillSkuQuantity(skuQuantityDO);
+    public void enableKillingSkuBucket(long skuId) {
+        SkuKillBO skuKillBO = redisService.getSkuKillBO(skuId);
+        //缓存该sku的桶
+        for(Map.Entry<Integer, Long> entry:skuKillBO.getBucketMap().entrySet()){
+            redisService.saveSkuBucketContent(skuId, entry.getKey(), entry.getValue());
+        }
     }
+    
 }
