@@ -56,10 +56,14 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
     @Autowired
     private ItemDetailMapper itemDetailMapper;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
     private static final String ORDER_CANCELED_INFO = "订单已被取消";
     private static final String ORDER_CREATE_FAILURE = "创建订单失败";
     private static final String ORDER_CANCEL_FAILURE = "取消订单失败";
     private static final String ORDER_ID_NOT_EXIST = "订单号不存在";
+    private static final String ORDER_LOCK_PREFIX = "ORDER_LOCK_PREFIX";
 
     @Override
     public List<OrderBO> listOrders(Long userId){
@@ -125,14 +129,23 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
         }
 
         try {
-            OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
-            orderDO.setIsDeleted(true);
-            orderMapper.updateByPrimaryKey(orderDO);
-            SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(orderDO.getSkuId());
-            long amount = skuQuantityDO.getAmount();
-            amount++;
-            skuQuantityDO.setAmount(amount);
-            redisService.saveSkuQuantity(skuQuantityDO);
+            while (true) {
+                if (tryLock(orderId)) {
+                    OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
+                    if (orderDO.getIsDeleted()) {
+                        unlock(orderId);
+                        return ResponseVO.buildSuccess();
+                    }
+                    orderDO.setIsDeleted(true);
+                    orderMapper.updateByPrimaryKey(orderDO);SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(orderDO.getSkuId());
+                    long amount = skuQuantityDO.getAmount();
+                    amount++;
+                    skuQuantityDO.setAmount(amount);
+                    redisService.saveSkuQuantity(skuQuantityDO);
+                    break;
+                }
+            }
+            unlock(orderId);
             return ResponseVO.buildSuccess();
         } catch (Exception e) {
             return ResponseVO.buildFailure(ORDER_CANCEL_FAILURE);
@@ -176,6 +189,14 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
         } catch (Exception e) {
             return ResponseVO.buildFailure(ORDER_CREATE_FAILURE);
         }
+    }
+
+    private boolean tryLock(Long orderId)  {
+        return redisUtils.setIfAbsent(ORDER_LOCK_PREFIX + orderId);
+    }
+
+    private void unlock(Long orderId) {
+        redisUtils.del(ORDER_LOCK_PREFIX + orderId);
     }
 
 }
