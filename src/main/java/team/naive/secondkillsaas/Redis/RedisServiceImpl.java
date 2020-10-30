@@ -3,6 +3,7 @@ package team.naive.secondkillsaas.Redis;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import team.naive.secondkillsaas.BO.SkuKillBO;
 import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.SkuDetailDO;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
@@ -21,7 +22,8 @@ public class RedisServiceImpl implements RedisService {
     public static final String ITEM_DETAIL_HASH = "ITEM_DETAIL_HASH";
     public static final String SKU_DETAIL_HASH = "SKU_DETAIL_HASH";
     public static final String SKU_QUANTITY_HASH = "SKU_QUANTITY_HASH";
-    public static final String KILL_SKU_QUANTITY_PREFIX = "KILL_SKU_QUANTITY_PREFIX";
+    public static final String SKU_KILL_PREFIX = "SKU_KILL_PREFIX";
+    public static final String SKU_BUCKET_HASH = "SKU_BUCKET_HASH";
 
     @Autowired
     private RedisUtils redisUtils;
@@ -73,21 +75,33 @@ public class RedisServiceImpl implements RedisService {
     }
 
     /*
-    抢购的时候，读和写sku数量
+    抢购的时候，读和写sku秒杀结构体
      */
 
     @Override
-    public SkuQuantityDO getKillSkuQuantity(long skuId){
+    public SkuKillBO getSkuKillBO(long skuId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hmget(KILL_SKU_QUANTITY_PREFIX+skuId)),
-                SkuQuantityDO.class);
+                JSONObject.toJSONString(redisUtils.hmget(SKU_KILL_PREFIX+"_"+skuId)),
+                SkuKillBO.class);
     }
 
     @Override
-    public void saveKillSkuQuantity(SkuQuantityDO skuQuantityDO){
+    public void saveSkuKillBO(SkuQuantityDO skuQuantityDO){
         long skuId = skuQuantityDO.getSkuId();
-        Map<Object, Object> newQuantity = JSONObject.parseObject(
-                JSONObject.toJSONString(skuQuantityDO), Map.class);
-        redisUtils.hmset(KILL_SKU_QUANTITY_PREFIX+skuId, newQuantity);
+        SkuKillBO skuKillBO = new SkuKillBO(skuQuantityDO);
+        Map<Object, Object> tempMap = JSONObject.parseObject(
+                JSONObject.toJSONString(skuKillBO), Map.class);
+        redisUtils.hmset(SKU_KILL_PREFIX+"_"+skuId, tempMap);
+    }
+
+    @Override
+    public long getSkuBucketContent(long skuId, int bucketIndex){
+        String number = String.valueOf(redisUtils.hget(SKU_BUCKET_HASH, skuId+"_"+bucketIndex));
+        return Long.parseLong(number) ;
+    }
+
+    @Override
+    public void saveSkuBucketContent(long skuId, int bucketIndex, long amount){
+        redisUtils.hset(SKU_BUCKET_HASH, skuId+"_"+bucketIndex, amount);
     }
 }

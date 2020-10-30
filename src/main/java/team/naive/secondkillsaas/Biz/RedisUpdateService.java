@@ -26,7 +26,7 @@ public interface RedisUpdateService {
     int readAllSkuQuantityToRedis();
 
     /*
-    把某商品的剩余库存放到redis里去
+    生成用于秒杀的桶
      */
-    void enableKillingSku(long skuId);
+    void enableKillingSkuBucket(long skuId);
 }
