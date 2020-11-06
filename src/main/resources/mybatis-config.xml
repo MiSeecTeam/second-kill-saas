@@ -37,7 +37,9 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
 
         <table tableName="user_order" domainObjectName="OrderDO" mapperName="OrderMapper"
-               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
+                <generatedKey column="order_id" sqlStatement="Mysql" identity="true"/>
+        </table>
         <table tableName="sys_user" domainObjectName="UserDO" mapperName="AccountMapper"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"/>
    </context>

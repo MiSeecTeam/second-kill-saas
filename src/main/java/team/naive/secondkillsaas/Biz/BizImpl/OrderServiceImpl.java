@@ -192,8 +192,8 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
         orderDO.setIsDeleted(false);
 
         try {
-            long orderId = orderMapper.insert(orderDO);
-            orderDO.setOrderId(orderId);
+            long affectRow = orderMapper.insert(orderDO);
+//            orderDO.setOrderId(orderId);
             OrderBO orderBO = new OrderBO();
             BeanUtils.copyProperties(orderDO, orderBO);
             return ResponseVO.buildSuccess(orderBO);

@@ -69,19 +69,22 @@
     where order_id = #{orderId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="team.naive.secondkillsaas.DO.OrderDO">
-    insert into user_order (order_id, gmt_created, gmt_modified, 
-      is_deleted, sku_id, amount, 
-      finished, user_id)
-    values (#{orderId,jdbcType=BIGINT}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
-      #{isDeleted,jdbcType=BIT}, #{skuId,jdbcType=BIGINT}, #{amount,jdbcType=BIGINT}, 
-      #{finished,jdbcType=BIT}, #{userId,jdbcType=BIGINT})
+    <selectKey keyProperty="orderId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_order (gmt_created, gmt_modified, is_deleted, 
+      sku_id, amount, finished, 
+      user_id)
+    values (#{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=BIT}, 
+      #{skuId,jdbcType=BIGINT}, #{amount,jdbcType=BIGINT}, #{finished,jdbcType=BIT}, 
+      #{userId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.OrderDO">
+    <selectKey keyProperty="orderId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into user_order
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="orderId != null">
-        order_id,
-      </if>
       <if test="gmtCreated != null">
         gmt_created,
       </if>
@@ -105,9 +108,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="orderId != null">
-        #{orderId,jdbcType=BIGINT},
-      </if>
       <if test="gmtCreated != null">
         #{gmtCreated,jdbcType=TIMESTAMP},
       </if>
