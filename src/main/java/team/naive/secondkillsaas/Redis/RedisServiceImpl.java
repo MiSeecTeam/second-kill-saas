@@ -34,13 +34,13 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public ItemDetailDO getItemDetail(long itemId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hget(ITEM_DETAIL_HASH, String.valueOf(itemId))),
+                JSONObject.toJSONString(redisUtils.node("slave").hget(ITEM_DETAIL_HASH, String.valueOf(itemId))),
                 ItemDetailDO.class);
     }
 
     @Override
     public void saveItemDetail(ItemDetailDO itemDetailDO){
-        redisUtils.hset(ITEM_DETAIL_HASH,String.valueOf(itemDetailDO.getItemId()), itemDetailDO);
+        redisUtils.node("master").hset(ITEM_DETAIL_HASH,String.valueOf(itemDetailDO.getItemId()), itemDetailDO);
     }
 
     /*
@@ -49,13 +49,13 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public SkuDetailDO getSkuDetail(long skuId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hget(SKU_DETAIL_HASH, String.valueOf(skuId))),
+                JSONObject.toJSONString(redisUtils.node("slave").hget(SKU_DETAIL_HASH, String.valueOf(skuId))),
                 SkuDetailDO.class);
     }
 
     @Override
     public void saveSkuDetail(SkuDetailDO skuDetailDO){
-        redisUtils.hset(SKU_DETAIL_HASH,String.valueOf(skuDetailDO.getSkuId()), skuDetailDO);
+        redisUtils.node("master").hset(SKU_DETAIL_HASH,String.valueOf(skuDetailDO.getSkuId()), skuDetailDO);
     }
 
     /*
@@ -65,13 +65,13 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public SkuQuantityDO getSkuQuantity(long skuId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hget(SKU_QUANTITY_HASH, String.valueOf(skuId))),
+                JSONObject.toJSONString(redisUtils.node("slave").hget(SKU_QUANTITY_HASH, String.valueOf(skuId))),
                 SkuQuantityDO.class);
     }
 
     @Override
     public void saveSkuQuantity(SkuQuantityDO skuQuantityDO){
-        redisUtils.hset(SKU_QUANTITY_HASH,String.valueOf(skuQuantityDO.getSkuId()), skuQuantityDO);
+        redisUtils.node("master").hset(SKU_QUANTITY_HASH,String.valueOf(skuQuantityDO.getSkuId()), skuQuantityDO);
     }
 
     /*
@@ -81,7 +81,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public SkuKillBO getSkuKillBO(long skuId){
         return JSONObject.parseObject(
-                JSONObject.toJSONString(redisUtils.hmget(SKU_KILL_PREFIX+"_"+skuId)),
+                JSONObject.toJSONString(redisUtils.node("slave").hmget(SKU_KILL_PREFIX+"_"+skuId)),
                 SkuKillBO.class);
     }
 
@@ -91,17 +91,17 @@ public class RedisServiceImpl implements RedisService {
         SkuKillBO skuKillBO = new SkuKillBO(skuQuantityDO);
         Map<Object, Object> tempMap = JSONObject.parseObject(
                 JSONObject.toJSONString(skuKillBO), Map.class);
-        redisUtils.hmset(SKU_KILL_PREFIX+"_"+skuId, tempMap);
+        redisUtils.node("master").hmset(SKU_KILL_PREFIX+"_"+skuId, tempMap);
     }
 
     @Override
     public long getSkuBucketContent(long skuId, int bucketIndex){
-        String number = String.valueOf(redisUtils.hget(SKU_BUCKET_HASH, skuId+"_"+bucketIndex));
+        String number = String.valueOf(redisUtils.node("slave").hget(SKU_BUCKET_HASH, skuId+"_"+bucketIndex));
         return Long.parseLong(number) ;
     }
 
     @Override
     public void saveSkuBucketContent(long skuId, int bucketIndex, long amount){
-        redisUtils.hset(SKU_BUCKET_HASH, skuId+"_"+bucketIndex, amount);
+        redisUtils.node("master").hset(SKU_BUCKET_HASH, skuId+"_"+bucketIndex, amount);
     }
 }

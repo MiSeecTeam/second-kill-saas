@@ -3,38 +3,17 @@ spring:
   redis:
     #主redis，负责写入
     master:
-      database: 0
       host: 101.37.80.37
       port: 6379
-      timeout: 20000
       password: nju123456
-      pool:
-        maxActive: 8
-        minIdle: 0
-        maxIdle: 8
-        maxWait: -1
 
     #只读redis
     slave1:
-      database: 0
       host: 101.37.80.37
       port: 6380
-      timeout: 20000
       password: nju123456
-      pool:
-        maxActive: 8
-        minIdle: 0
-        maxIdle: 8
-        maxWait: -1
 
     slave2:
-      database: 0
       host: 101.37.80.37
       port: 6381
-      timeout: 20000
       password: nju123456
-      pool:
-        maxActive: 8
-        minIdle: 0
-        maxIdle: 8
-        maxWait: -1

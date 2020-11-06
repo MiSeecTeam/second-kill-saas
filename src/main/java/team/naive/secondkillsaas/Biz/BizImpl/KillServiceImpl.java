@@ -192,17 +192,17 @@ public class KillServiceImpl implements KillService {
     }
 
     private boolean tryLock(String item)  {
-        return redisUtils.setIfAbsent(KILL_LOCK_PREFIX + item);
+        return redisUtils.node("master").setIfAbsent(KILL_LOCK_PREFIX + item);
     }
 
     private void unLock(String item)  {
-        redisUtils.del(KILL_LOCK_PREFIX + item);
+        redisUtils.node("master").del(KILL_LOCK_PREFIX + item);
     }
 
     // 获得上一次结果
     private ResponseVO tryGetLast(Long transactionId)  {
         String key = KILL_IDEMPOTENT_PREFIX + transactionId;
-        Object res = redisUtils.get(key);
+        Object res = redisUtils.node("master").get(key);
         if (res != null) {
             return (ResponseVO) res;
         }
@@ -211,7 +211,7 @@ public class KillServiceImpl implements KillService {
 
     private void saveLast(Long transactionId, ResponseVO last)  {
         String key = KILL_IDEMPOTENT_PREFIX + transactionId;
-        redisUtils.set(key, last);
+        redisUtils.node("master").set(key, last);
     }
 
 
