@@ -10,6 +10,8 @@ import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
 import team.naive.secondkillsaas.Redis.RedisService;
 
+import java.util.List;
+
 /**
  * @author: lxc
  * @email 171250576@smail.nju.edu.cn
@@ -44,5 +46,11 @@ public class RedisTest extends SecondKillSaasApplicationTests {
         System.out.println(JSONObject.toJSONString(skuQuantityDO));
         SkuDetailDO skuDetailDO = redisService.getSkuDetail(10001001);
         System.out.println(JSONObject.toJSONString(skuDetailDO));
+    }
+
+    @Test
+    void test3(){
+        List<SkuDetailDO> skuDetailDOList = redisService.getSkuDetailListByItemId(10002);
+        System.out.println(JSONObject.toJSONString(skuDetailDOList.get(0)));
     }
 }

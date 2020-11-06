@@ -6,6 +6,9 @@ import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.SkuDetailDO;
 import team.naive.secondkillsaas.DO.SkuQuantityDO;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author: lxc
  * @email 171250576@smail.nju.edu.cn
@@ -19,9 +22,12 @@ public interface RedisService {
      */
     ItemDetailDO getItemDetail(long itemId);
     void saveItemDetail(ItemDetailDO itemDetailDO);
+    Map<Object, Object> getAllItemDetail();
 
     SkuDetailDO getSkuDetail(long skuId);
     void saveSkuDetail(SkuDetailDO skuDetailDO);
+
+    List<SkuDetailDO> getSkuDetailListByItemId(long itemId);
 
     SkuQuantityDO getSkuQuantity(long skuId);
     void saveSkuQuantity(SkuQuantityDO skuQuantityDO);
