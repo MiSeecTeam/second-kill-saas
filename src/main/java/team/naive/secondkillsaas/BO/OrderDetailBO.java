@@ -20,7 +20,7 @@ import java.util.Date;
 public class OrderDetailBO extends OrderBO {
 
     public OrderDetailBO(OrderDO orderDO, SkuDetailDO skuDetailDO, ItemDetailDO itemDetailDO) {
-        BeanUtils.copyProperties(orderDO, this);
+        super(orderDO);
         this.skuName = skuDetailDO.getSkuName();
         this.skuDesc = skuDetailDO.getSkuDesc();
         this.itemDesc = itemDetailDO.getItemDesc();
