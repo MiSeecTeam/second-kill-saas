@@ -90,6 +90,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemSkuDetailVO getItemSkuDetailByItemId(Long itemId) {
 
         ItemSkuDetailVO result = new ItemSkuDetailVO();
+        result.setItemId(itemId);
 
         List<SkuDetailDO> skuDetailList = redisService.getSkuDetailListByItemId(itemId);
         result.setSkuDetailList(skuDetailList);
