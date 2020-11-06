@@ -57,15 +57,15 @@ public class AccountController {
         if (session == null) {
             return ResponseVO.buildFailure("失败，session已失效");
         } else {
-            UserForm sessionForm = (UserForm) session.getAttribute(InterceptorConfiguration.SESSION_KEY);
+            UserVO userVO = (UserVO) session.getAttribute(InterceptorConfiguration.SESSION_KEY);
             BriefUserVO user = accountService.getUser(userId);
             if (user == null) {
                 return ResponseVO.buildFailure("失败，无效的用户id");
             }
-            if (sessionForm == null) {
+            if (userVO == null) {
                 return ResponseVO.buildFailure("失败，session用户信息无效");
             }
-            if (sessionForm.getUsername().equals(user.getUsername())) {
+            if (userVO.getUsername().equals(user.getUsername())) {
                 return ResponseVO.buildSuccess(user);
             } else {
                 return ResponseVO.buildFailure("失败，请求信息不一致");
