@@ -14,12 +14,18 @@ import team.naive.secondkillsaas.BO.SkuQuantityBO;
 import team.naive.secondkillsaas.DO.ItemDetailDO;
 import team.naive.secondkillsaas.DO.ItemDetailDOExample;
 import team.naive.secondkillsaas.Biz.ItemService;
+import team.naive.secondkillsaas.DO.SkuDetailDO;
+import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
 import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
+import team.naive.secondkillsaas.VO.ItemListItemVO;
+import team.naive.secondkillsaas.VO.ItemSkuDetailVO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -45,18 +51,28 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private SkuQuantityMapper skuQuantityMapper;
 
+    /**
+     * 获得商品列表，包含价格属性
+     * @return
+     */
     @Override
-    public List<ItemDetailBO> listItemDetail() {
-        ItemDetailDOExample example = new ItemDetailDOExample();
-        ItemDetailDOExample.Criteria criteria = example.createCriteria();
-        // todo:根据criteria实现更复杂的list查询
-        criteria.andGmtCreatedIsNotNull();
-        List<ItemDetailDO> itemDetailDOList = itemDetailMapper.selectByExampleWithBLOBs(example);
-        return itemDetailDOList.stream().map(itemDetailDO -> {
-            ItemDetailBO itemDetailBO = new ItemDetailBO();
-            BeanUtils.copyProperties(itemDetailDO, itemDetailBO);
-            return itemDetailBO;
-        }).collect(Collectors.toList());
+    public List<ItemListItemVO> listItemDetail() {
+        List<ItemListItemVO> itemList = new ArrayList<>();
+        Map<Object, Object> allItemDetail = redisService.getAllItemDetail();
+        for(Object object: allItemDetail.values()){
+            /*
+            填充itemListItemVO
+             */
+            ItemListItemVO itemListItemVO = new ItemListItemVO();
+            BeanUtils.copyProperties(object, itemListItemVO);
+            //获得最低价与最高价
+            List<SkuDetailDO> skuDetailList = redisService.getSkuDetailListByItemId(itemListItemVO.getItemId());
+            double[] price = getPriceOfItem(skuDetailList);
+            itemListItemVO.setPriceLow(price[0]);
+            itemListItemVO.setPriceHigh(price[1]);
+
+            itemList.add(itemListItemVO);
+        }
     }
 
     @Override
@@ -66,20 +82,66 @@ public class ItemServiceImpl implements ItemService {
         return itemDetailBO;
     }
 
-
     @Override
+    public ItemSkuDetailVO getItemSkuDetailByItemId(Long itemId) {
+
+        ItemSkuDetailVO result = new ItemSkuDetailVO();
+
+        List<SkuDetailDO> skuDetailList = redisService.getSkuDetailListByItemId(itemId);
+        result.setSkuDetailList(skuDetailList);
+        double[] price = getPriceOfItem(skuDetailList);
+        //设置价格
+        result.setPriceLow(price[0]);
+        result.setPriceHigh(price[1]);
+        //设置秒杀起止时间
+        if(skuDetailList.size()!=0){
+            long skuId = skuDetailList.get(0).getSkuId();
+            SkuQuantityDO skuQuantity = redisService.getSkuQuantity(skuId);
+            result.setStartTime(skuQuantity.getStartTime());
+            result.setEndTime(skuQuantity.getEndTime());
+        }
+    }
+
     public SkuDetailBO getSkuDetail(Long id) {
         SkuDetailBO skuDetailBO = new SkuDetailBO();
         BeanUtils.copyProperties(redisService.getSkuDetail(id), skuDetailBO);
         return skuDetailBO;
     }
 
-    @Override
+
     public SkuQuantityBO getSkuQuantity(Long id) {
         SkuQuantityBO skuQuantityBO = new SkuQuantityBO();
         BeanUtils.copyProperties(redisService.getSkuQuantity(id), skuQuantityBO);
         return skuQuantityBO;
     }
+
+    /**
+     * 获得某商品的价格
+     * @param skuDetailList
+     * @return {price_low, price_high}
+     */
+    private double[] getPriceOfItem(List<SkuDetailDO> skuDetailList){
+        double price_low = 0;
+        double price_high = 0;
+        if(skuDetailList.size()==0){
+            //该产品没sku，不设置价格
+        }
+        else{
+            //TODO 不知到价格属性叫什么
+            price_low = skuDetailList.get(0).getPrice();
+            price_high = skuDetailList.get(0).getPrice();
+            for(SkuDetailDO skuDetailDO: skuDetailList){
+                if(skuDetailDO.getPrcie()>price_high){
+                    price_high = skuDetailDO.getPrcie();
+                }
+                if(skuDetailDO.getPrcie()<price_low){
+                    price_low = skuDetailDO.getPrcie();
+                }
+            }
+        }
+        return new double[]{price_low, price_high};
+    }
+
 
 
 }

@@ -3,6 +3,8 @@ package team.naive.secondkillsaas.Biz;
 import team.naive.secondkillsaas.BO.ItemDetailBO;
 import team.naive.secondkillsaas.BO.SkuDetailBO;
 import team.naive.secondkillsaas.BO.SkuQuantityBO;
+import team.naive.secondkillsaas.VO.ItemListItemVO;
+import team.naive.secondkillsaas.VO.ItemSkuDetailVO;
 
 import java.util.List;
 
@@ -13,11 +15,9 @@ import java.util.List;
  */
 public interface ItemService {
 
-    List<ItemDetailBO> listItemDetail();
+    List<ItemListItemVO> listItemDetail();
 
     ItemDetailBO getItemDetail(Long itemId);
 
-    SkuDetailBO getSkuDetail(Long skuId);
-
-    SkuQuantityBO getSkuQuantity(Long skuId);
+    ItemSkuDetailVO getItemSkuDetailByItemId(Long itemId);
 }

@@ -42,5 +42,19 @@ public class ItemController {
         return res;
     }
 
-    // todo:更多接口
+    /**
+     * 获得
+     * 1、某商品的sku列表。
+     * 2、价格最低到最高
+     * 3、秒杀起止时间
+     * @return
+     */
+    @GetMapping("/sku/all")
+    public ResponseVO getItemSkuDetail(@RequestParam("itemId") Long itemId){
+        ResponseVO res = new ResponseVO();
+        res.setSuccess(true);
+        res.setContent(itemService.getItemSkuDetailByItemId(itemId));
+        return res;
+    }
+
 }
