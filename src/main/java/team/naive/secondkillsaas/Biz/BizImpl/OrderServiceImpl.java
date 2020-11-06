@@ -139,19 +139,23 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
                     OrderDO orderDO = orderMapper.selectByPrimaryKey(orderId);
                     if (orderDO.getIsDeleted()) {
                         unlock(orderId);
-                        return ResponseVO.buildSuccess();
+                        return ResponseVO.buildSuccess("订单已删除");
                     }
                     orderDO.setIsDeleted(true);
-                    orderMapper.updateByPrimaryKey(orderDO);SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(orderDO.getSkuId());
+                    orderMapper.updateByPrimaryKey(orderDO);
+
+                    SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(orderDO.getSkuId());
                     long amount = skuQuantityDO.getAmount();
                     amount++;
                     skuQuantityDO.setAmount(amount);
                     redisService.saveSkuQuantity(skuQuantityDO);
+
+
                     break;
                 }
             }
             unlock(orderId);
-            return ResponseVO.buildSuccess();
+            return ResponseVO.buildSuccess("订单已删除");
         } catch (Exception e) {
             return ResponseVO.buildFailure(ORDER_CANCEL_FAILURE);
         }
