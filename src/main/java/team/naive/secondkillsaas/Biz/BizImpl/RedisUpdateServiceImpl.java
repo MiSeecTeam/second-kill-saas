@@ -41,7 +41,7 @@ public class RedisUpdateServiceImpl implements RedisUpdateService {
         //获得全部的ItemDetailDO
         ItemDetailDOExample example = new ItemDetailDOExample();
 //        example.createCriteria().andIsDeletedEqualTo(false);
-        List<ItemDetailDO> itemDetailDOS = itemDetailMapper.selectByExample(example);
+        List<ItemDetailDO> itemDetailDOS = itemDetailMapper.selectByExampleWithBLOBs(example);
         for(ItemDetailDO itemDetailDO: itemDetailDOS){
             redisService.saveItemDetail(itemDetailDO);
         }
@@ -56,7 +56,7 @@ public class RedisUpdateServiceImpl implements RedisUpdateService {
 
         SkuDetailDOExample example = new SkuDetailDOExample();
 //        example.createCriteria().andIsDeletedEqualTo(false);
-        List<SkuDetailDO> skuDetailDOS = skuDetailMapper.selectByExample(example);
+        List<SkuDetailDO> skuDetailDOS = skuDetailMapper.selectByExampleWithBLOBs(example);
         for(SkuDetailDO skuDetailDO: skuDetailDOS){
             redisService.saveSkuDetail(skuDetailDO);
         }
