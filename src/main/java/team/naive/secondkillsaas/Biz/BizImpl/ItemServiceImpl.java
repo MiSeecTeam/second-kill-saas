@@ -51,8 +51,7 @@ public class ItemServiceImpl implements ItemService {
         ItemDetailDOExample.Criteria criteria = example.createCriteria();
         // todo:根据criteria实现更复杂的list查询
         criteria.andGmtCreatedIsNotNull();
-        List<ItemDetailDO> itemDetailDOList = itemDetailMapper.selectByExample(example);
-
+        List<ItemDetailDO> itemDetailDOList = itemDetailMapper.selectByExampleWithBLOBs(example);
         return itemDetailDOList.stream().map(itemDetailDO -> {
             ItemDetailBO itemDetailBO = new ItemDetailBO();
             BeanUtils.copyProperties(itemDetailDO, itemDetailBO);

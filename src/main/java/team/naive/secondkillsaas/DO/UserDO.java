@@ -9,14 +9,6 @@ public class UserDO {
 
     private Integer role;
 
-    public UserDO() {}
-
-    public UserDO(String username, String password, Integer role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
     public Integer getId() {
         return id;
     }
