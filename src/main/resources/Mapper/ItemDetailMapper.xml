@@ -91,19 +91,20 @@
     where item_id = #{itemId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="team.naive.secondkillsaas.DO.ItemDetailDO">
-    insert into item_detail (item_id, gmt_created, gmt_modified, 
-      is_deleted, item_name, item_desc
-      )
-    values (#{itemId,jdbcType=BIGINT}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
-      #{isDeleted,jdbcType=BIT}, #{itemName,jdbcType=VARCHAR}, #{itemDesc,jdbcType=LONGVARCHAR}
-      )
+    <selectKey keyProperty="itemId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into item_detail (gmt_created, gmt_modified, is_deleted, 
+      item_name, item_desc)
+    values (#{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=BIT}, 
+      #{itemName,jdbcType=VARCHAR}, #{itemDesc,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.ItemDetailDO">
+    <selectKey keyProperty="itemId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into item_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="itemId != null">
-        item_id,
-      </if>
       <if test="gmtCreated != null">
         gmt_created,
       </if>
@@ -121,9 +122,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="itemId != null">
-        #{itemId,jdbcType=BIGINT},
-      </if>
       <if test="gmtCreated != null">
         #{gmtCreated,jdbcType=TIMESTAMP},
       </if>

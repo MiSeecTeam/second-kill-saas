@@ -1,10 +1,7 @@
 package team.naive.secondkillsaas.Biz;
 
 import team.naive.secondkillsaas.BO.ItemDetailBO;
-import team.naive.secondkillsaas.BO.SkuDetailBO;
-import team.naive.secondkillsaas.BO.SkuQuantityBO;
-import team.naive.secondkillsaas.VO.ItemListItemVO;
-import team.naive.secondkillsaas.VO.ItemSkuDetailVO;
+import team.naive.secondkillsaas.VO.*;
 
 import java.util.List;
 
@@ -20,4 +17,39 @@ public interface ItemService {
     ItemDetailBO getItemDetail(Long itemId);
 
     ItemSkuDetailVO getItemSkuDetailByItemId(Long itemId);
+
+    /**
+     * 添加商品
+     * @param itemVO 商品信息
+     * @return
+     */
+    ResponseVO addItem(ItemVO itemVO);
+
+    /**
+     * 添加sku
+     * @param skuDetailVO
+     * @return
+     */
+    ResponseVO addSku(SkuDetailVO skuDetailVO);
+
+    /**
+     * 获取所有商品及sku
+     * @return
+     */
+    ResponseVO getAllItemSku();
+
+    /**
+     * 更新sku
+     * @param skuId
+     * @param amount
+     * @return
+     */
+    ResponseVO updateSku(Long skuId, Long amount);
+
+    /**
+     * 删除sku
+     * @param itemId
+     * @return
+     */
+    ResponseVO deleteItem(Long itemId);
 }

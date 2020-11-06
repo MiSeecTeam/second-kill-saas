@@ -12,19 +12,17 @@ import org.springframework.stereotype.Service;
 import team.naive.secondkillsaas.BO.ItemDetailBO;
 import team.naive.secondkillsaas.BO.SkuDetailBO;
 import team.naive.secondkillsaas.BO.SkuQuantityBO;
-import team.naive.secondkillsaas.DO.ItemDetailDO;
-import team.naive.secondkillsaas.DO.ItemDetailDOExample;
+import team.naive.secondkillsaas.Biz.RedisUpdateService;
+import team.naive.secondkillsaas.DO.*;
 import team.naive.secondkillsaas.Biz.ItemService;
-import team.naive.secondkillsaas.DO.SkuDetailDO;
-import team.naive.secondkillsaas.DO.SkuQuantityDO;
 import team.naive.secondkillsaas.Mapper.ItemDetailMapper;
 import team.naive.secondkillsaas.Redis.RedisService;
 import team.naive.secondkillsaas.Mapper.SkuDetailMapper;
 import team.naive.secondkillsaas.Mapper.SkuQuantityMapper;
-import team.naive.secondkillsaas.VO.ItemListItemVO;
-import team.naive.secondkillsaas.VO.ItemSkuDetailVO;
+import team.naive.secondkillsaas.VO.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,6 +49,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private SkuQuantityMapper skuQuantityMapper;
+
+    @Autowired
+    private RedisUpdateService redisUpdateService;
 
     /**
      * 获得商品列表，包含价格属性
@@ -105,6 +106,84 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return result;
+    }
+
+    @Override
+    public ResponseVO updateSku(Long skuId, Long amount) {
+        SkuQuantityDO skuQuantityDO = skuQuantityMapper.selectByPrimaryKey(skuId);
+        if (skuQuantityDO.getStartTime().before(new Date()) && skuQuantityDO.getEndTime().after(new Date())) {
+            return ResponseVO.buildFailure("正在秒杀中，无法更新");
+        }
+        skuQuantityDO.setAmount(amount);
+        skuQuantityMapper.updateByPrimaryKeySelective(skuQuantityDO);
+        return ResponseVO.buildSuccess();
+    }
+
+    @Override
+    public ResponseVO addItem(ItemVO itemVO) {
+        ItemDetailDO itemDetailDO = new ItemDetailDO();
+        BeanUtils.copyProperties(itemVO, itemDetailDO);
+        itemDetailDO.setGmtCreated(new Date());
+        itemDetailDO.setGmtModified(new Date());
+        itemDetailDO.setIsDeleted(false);
+        itemDetailMapper.insert(itemDetailDO);
+        return ResponseVO.buildSuccess(itemDetailDO);
+    }
+
+    @Override
+    public ResponseVO addSku(SkuDetailVO skuDetailVO) {
+        SkuDetailDO skuDetailDO = new SkuDetailDO();
+        BeanUtils.copyProperties(skuDetailVO, skuDetailDO);
+        skuDetailDO.setGmtCreated(new Date());
+        skuDetailDO.setGmtModified(new Date());
+        skuDetailDO.setIsDeleted(false);
+        skuDetailMapper.insert(skuDetailDO);
+
+        SkuQuantityDO skuQuantityDO = new SkuQuantityDO();
+        BeanUtils.copyProperties(skuDetailVO, skuQuantityDO);
+        skuQuantityDO.setGmtCreated(new Date());
+        skuQuantityDO.setGmtModified(new Date());
+        skuQuantityDO.setIsDeleted(false);
+        skuQuantityMapper.insert(skuQuantityDO);
+        return ResponseVO.buildSuccess();
+    }
+
+    @Override
+    public ResponseVO getAllItemSku() {
+        List<ItemSkuFormVO> itemList = new ArrayList<>();
+        // 获取所有item
+        Map<Object, Object> allItemDetail = redisService.getAllItemDetail();
+        for(Object object: allItemDetail.values()){
+            ItemSkuFormVO itemSkuFormVO = new ItemSkuFormVO();
+            BeanUtils.copyProperties(object, itemSkuFormVO);
+            // 获取所有sku
+            List<SkuDetailDO> skuDetailList = redisService.getSkuDetailListByItemId(itemSkuFormVO.getItemId());
+            itemSkuFormVO.setSkuDetailList(skuDetailList);
+            itemList.add(itemSkuFormVO);
+        }
+        return ResponseVO.buildSuccess(itemList);
+    }
+
+    @Override
+    public ResponseVO deleteItem(Long itemId) {
+        // todo:删除时判断是否有秒杀进行
+        itemDetailMapper.deleteByPrimaryKey(itemId);
+        SkuDetailDOExample example = new SkuDetailDOExample();
+        SkuDetailDOExample.Criteria criteria = example.createCriteria();
+        criteria.andItemIdEqualTo(itemId);
+        List<SkuDetailDO> skuDetailDOList = skuDetailMapper.selectByExampleWithBLOBs(example);
+        List<Long> skuIds = new ArrayList<>();
+        for (SkuDetailDO skuDetailDO: skuDetailDOList) {
+            skuIds.add(skuDetailDO.getSkuId());
+        }
+        for (Long id: skuIds) {
+            skuDetailMapper.deleteByPrimaryKey(id);
+            skuQuantityMapper.deleteByPrimaryKey(id);
+        }
+        redisUpdateService.readAllItemDetailToRedis();
+        redisUpdateService.readAllSkuDetailToRedis();
+        redisUpdateService.readAllSkuQuantityToRedis();
+        return ResponseVO.buildSuccess();
     }
 
     public SkuDetailBO getSkuDetail(Long id) {
