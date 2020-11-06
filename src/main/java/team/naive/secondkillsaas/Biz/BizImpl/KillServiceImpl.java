@@ -106,12 +106,12 @@ public class KillServiceImpl implements KillService {
 
         //先进行幂等判断，如果是正在进行抢购，则轮询等待结果，如果是已经有结果，返回该结果。
         while (true){
-            if(tryLock("_"+skuId+"_"+userId)){
+            if(tryLock("_IDEMPOTENT"+"_"+skuId+"_"+userId)){
                 ResponseVO lastResult = tryGetLast(transactionId);
                 //如果不为空，说明已经抢购过了
                 if (lastResult != null) {
                     //下面不会修改lastResult，解锁
-                    unLock("_"+skuId+"_"+userId);
+                    unLock("_IDEMPOTENT"+"_"+skuId+"_"+userId);
                     //如果是killing，说明有其他进程正在执行抢购
                     //等待得出结果，然后返回结果
                     while(lastResult.getMessage().equals("killing")){
@@ -127,7 +127,7 @@ public class KillServiceImpl implements KillService {
                 lastResult.setMessage("killing");
                 saveLast(transactionId, lastResult);
                 //然后放行执行抢购
-                unLock("_"+skuId+"_"+userId);
+                unLock("_IDEMPOTENT"+"_"+skuId+"_"+userId);
                 break;
             }
         }

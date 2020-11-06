@@ -23,9 +23,8 @@ import java.util.Map;
 public class RedisServiceImpl implements RedisService {
     public static final String ITEM_DETAIL_HASH = "ITEM_DETAIL_HASH";
     public static final String SKU_DETAIL_HASH = "SKU_DETAIL_HASH";
-    public static final String SKU_DETAIL_LIST_GATHER_BY_ITEM_ID = "SKU_DETAIL_LIST_GATHER_BY_ITEM_ID";
+    public static final String SKU_DETAIL_HASH_GATHER_BY_ITEM_ID = "SKU_DETAIL_HASH_GATHER_BY_ITEM_ID";
     public static final String SKU_QUANTITY_HASH = "SKU_QUANTITY_HASH";
-    public static final String SKU_QUANTITY_LIST_GATHER_BY_ITEM_ID = "SKU_QUANTITY_LIST_GATHER_BY_ITEM_ID";
     public static final String SKU_KILL_PREFIX = "SKU_KILL_PREFIX";
     public static final String SKU_BUCKET_HASH = "SKU_BUCKET_HASH";
 
@@ -67,16 +66,16 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveSkuDetail(SkuDetailDO skuDetailDO){
-        redisUtils.lSet(SKU_DETAIL_LIST_GATHER_BY_ITEM_ID+"_"+skuDetailDO.getItemId(),
-                skuDetailDO);
+        redisUtils.hset(SKU_DETAIL_HASH_GATHER_BY_ITEM_ID+"_"+skuDetailDO.getItemId(),
+                String.valueOf(skuDetailDO.getSkuId()), skuDetailDO);
         redisUtils.hset(SKU_DETAIL_HASH, String.valueOf(skuDetailDO.getSkuId()), skuDetailDO);
     }
 
     @Override
     public List<SkuDetailDO> getSkuDetailListByItemId(long itemId) {
         List<SkuDetailDO> resultList = new ArrayList<>();
-        List<Object> objects = redisUtils.lGet(SKU_DETAIL_LIST_GATHER_BY_ITEM_ID + "_" + itemId, 0, -1);
-        for(Object object: objects){
+        Map<Object, Object> skuDetailMap = redisUtils.hmget(SKU_DETAIL_HASH_GATHER_BY_ITEM_ID + "_" + itemId);
+        for(Object object: skuDetailMap.values()){
             resultList.add((SkuDetailDO)object);
         }
         return resultList;

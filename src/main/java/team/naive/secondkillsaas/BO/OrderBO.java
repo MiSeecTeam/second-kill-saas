@@ -1,6 +1,7 @@
 package team.naive.secondkillsaas.BO;
 
 import lombok.Data;
+import org.springframework.data.domain.Sort;
 import team.naive.secondkillsaas.DO.OrderDO;
 
 import java.io.Serializable;

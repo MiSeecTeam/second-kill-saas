@@ -3,6 +3,7 @@ package team.naive.secondkillsaas.Biz.BizImpl;/**
  */
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -73,6 +74,8 @@ public class ItemServiceImpl implements ItemService {
 
             itemList.add(itemListItemVO);
         }
+
+        return itemList;
     }
 
     @Override
@@ -100,6 +103,8 @@ public class ItemServiceImpl implements ItemService {
             result.setStartTime(skuQuantity.getStartTime());
             result.setEndTime(skuQuantity.getEndTime());
         }
+
+        return result;
     }
 
     public SkuDetailBO getSkuDetail(Long id) {
@@ -127,15 +132,14 @@ public class ItemServiceImpl implements ItemService {
             //该产品没sku，不设置价格
         }
         else{
-            //TODO 不知到价格属性叫什么
-            price_low = skuDetailList.get(0).getPrice();
-            price_high = skuDetailList.get(0).getPrice();
+            price_low = skuDetailList.get(0).getSkuPrice().doubleValue();
+            price_high = skuDetailList.get(0).getSkuPrice().doubleValue();
             for(SkuDetailDO skuDetailDO: skuDetailList){
-                if(skuDetailDO.getPrcie()>price_high){
-                    price_high = skuDetailDO.getPrcie();
+                if(skuDetailDO.getSkuPrice().doubleValue()>price_high){
+                    price_high = skuDetailDO.getSkuPrice().doubleValue();
                 }
-                if(skuDetailDO.getPrcie()<price_low){
-                    price_low = skuDetailDO.getPrcie();
+                if(skuDetailDO.getSkuPrice().doubleValue()<price_low){
+                    price_low = skuDetailDO.getSkuPrice().doubleValue();
                 }
             }
         }
