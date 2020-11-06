@@ -1,0 +1,19 @@
+spring:
+  ##redis
+  redis:
+    #主redis，负责写入
+    master:
+      host: 101.37.80.37
+      port: 6379
+      password: nju123456
+
+    #只读redis
+    slave1:
+      host: 101.37.80.37
+      port: 6380
+      password: nju123456
+
+    slave2:
+      host: 101.37.80.37
+      port: 6381
+      password: nju123456

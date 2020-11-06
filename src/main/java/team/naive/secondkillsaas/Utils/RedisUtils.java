@@ -8,10 +8,12 @@ package team.naive.secondkillsaas.Utils;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,11 +28,49 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtils {
 
-    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
+    @Resource(name = "masterRedisTemplate")
+    private RedisTemplate<String, Object> masterRedisTemplate;
+
+    @Resource(name = "slave1RedisTemplate")
+    private RedisTemplate<String, Object> slave1RedisTemplate;
+
+    @Resource(name = "slave2RedisTemplate")
+    private RedisTemplate<String, Object> slave2RedisTemplate;
+
+    //默认使用master节点
+    public RedisUtils(@Qualifier("masterRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+
+    /**
+     * 设置节点
+     * @param node master或slave
+     * @return 本身
+     */
+    public RedisUtils node(String node){
+        if(node.equals("master")){
+            this.redisTemplate = masterRedisTemplate;
+        }
+        else if(node.equals("slave")){
+            //slave节点使用随机策略
+            double random = Math.random();
+            if(random>0.5){
+                this.redisTemplate = slave1RedisTemplate;
+            }
+            else{
+                this.redisTemplate = slave2RedisTemplate;
+            }
+        }
+        else {
+            try {
+                throw new IllegalArgumentException("Wrong Node!!");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return this;
     }
 
 

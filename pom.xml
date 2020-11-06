@@ -105,6 +105,13 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
+		<!-- redis集群使用 -->
+		<dependency>
+			<!-- springboot的parents依赖中有对版本号的控制，此处不需要添加版本号相关信息 -->
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
