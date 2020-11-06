@@ -2,6 +2,7 @@ package team.naive.secondkillsaas.BO;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -19,5 +20,7 @@ public class SkuDetailBO {
     private String skuName;
 
     private String skuDesc;
+
+    private BigDecimal skuPrice;
 
 }

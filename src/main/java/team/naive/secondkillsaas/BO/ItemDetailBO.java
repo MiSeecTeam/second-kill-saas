@@ -2,6 +2,7 @@ package team.naive.secondkillsaas.BO;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -24,5 +25,7 @@ public class ItemDetailBO {
     private String itemName;
 
     private String itemDesc;
+
+    private BigDecimal itemPrice;
 
 }

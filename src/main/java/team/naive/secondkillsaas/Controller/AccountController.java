@@ -31,7 +31,7 @@ public class AccountController {
             return ResponseVO.buildFailure(ACCOUNT_INFO_ERROR);
         }
         //注册session
-        session.setAttribute(InterceptorConfiguration.SESSION_KEY, userForm);
+        session.setAttribute(InterceptorConfiguration.SESSION_KEY, user);
         if (user.getRole() == 0) {
             session.setAttribute(InterceptorConfiguration.ISUSE, "true");
         } else if (user.getRole() == 2) {

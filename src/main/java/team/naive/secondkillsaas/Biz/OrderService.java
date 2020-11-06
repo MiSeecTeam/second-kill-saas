@@ -16,7 +16,7 @@ public interface OrderService {
 
     OrderDetailBO getOrderDetail(Long orderId);
 
-    OrderBO getOrderDetail(Long userId, Long skuId);
+    OrderBO getOrderDetail(Integer userId, Long skuId);
 
     ResponseVO cancelOrder(Long orderId);
 

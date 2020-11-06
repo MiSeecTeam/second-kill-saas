@@ -1,5 +1,6 @@
 package team.naive.secondkillsaas.DO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class SkuDetailDO {
@@ -14,6 +15,8 @@ public class SkuDetailDO {
     private Long itemId;
 
     private String skuName;
+
+    private BigDecimal skuPrice;
 
     private String skuDesc;
 
@@ -63,6 +66,14 @@ public class SkuDetailDO {
 
     public void setSkuName(String skuName) {
         this.skuName = skuName == null ? null : skuName.trim();
+    }
+
+    public BigDecimal getSkuPrice() {
+        return skuPrice;
+    }
+
+    public void setSkuPrice(BigDecimal skuPrice) {
+        this.skuPrice = skuPrice;
     }
 
     public String getSkuDesc() {

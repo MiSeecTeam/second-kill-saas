@@ -8,6 +8,7 @@
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
     <result column="item_id" jdbcType="BIGINT" property="itemId" />
     <result column="sku_name" jdbcType="VARCHAR" property="skuName" />
+    <result column="sku_price" jdbcType="DECIMAL" property="skuPrice" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="team.naive.secondkillsaas.DO.SkuDetailDO">
     <result column="sku_desc" jdbcType="LONGVARCHAR" property="skuDesc" />
@@ -42,7 +43,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    sku_id, gmt_created, gmt_modified, is_deleted, item_id, sku_name
+    sku_id, gmt_created, gmt_modified, is_deleted, item_id, sku_name, sku_price
   </sql>
   <sql id="Blob_Column_List">
     sku_desc
@@ -94,10 +95,10 @@
   <insert id="insert" parameterType="team.naive.secondkillsaas.DO.SkuDetailDO">
     insert into sku_detail (sku_id, gmt_created, gmt_modified, 
       is_deleted, item_id, sku_name, 
-      sku_desc)
+      sku_price, sku_desc)
     values (#{skuId,jdbcType=BIGINT}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{isDeleted,jdbcType=BIT}, #{itemId,jdbcType=BIGINT}, #{skuName,jdbcType=VARCHAR}, 
-      #{skuDesc,jdbcType=LONGVARCHAR})
+      #{skuPrice,jdbcType=DECIMAL}, #{skuDesc,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="team.naive.secondkillsaas.DO.SkuDetailDO">
     insert into sku_detail
@@ -119,6 +120,9 @@
       </if>
       <if test="skuName != null">
         sku_name,
+      </if>
+      <if test="skuPrice != null">
+        sku_price,
       </if>
       <if test="skuDesc != null">
         sku_desc,
@@ -143,6 +147,9 @@
       <if test="skuName != null">
         #{skuName,jdbcType=VARCHAR},
       </if>
+      <if test="skuPrice != null">
+        #{skuPrice,jdbcType=DECIMAL},
+      </if>
       <if test="skuDesc != null">
         #{skuDesc,jdbcType=LONGVARCHAR},
       </if>
@@ -166,6 +173,9 @@
       <if test="skuName != null">
         sku_name = #{skuName,jdbcType=VARCHAR},
       </if>
+      <if test="skuPrice != null">
+        sku_price = #{skuPrice,jdbcType=DECIMAL},
+      </if>
       <if test="skuDesc != null">
         sku_desc = #{skuDesc,jdbcType=LONGVARCHAR},
       </if>
@@ -179,6 +189,7 @@
       is_deleted = #{isDeleted,jdbcType=BIT},
       item_id = #{itemId,jdbcType=BIGINT},
       sku_name = #{skuName,jdbcType=VARCHAR},
+      sku_price = #{skuPrice,jdbcType=DECIMAL},
       sku_desc = #{skuDesc,jdbcType=LONGVARCHAR}
     where sku_id = #{skuId,jdbcType=BIGINT}
   </update>
@@ -188,7 +199,8 @@
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       is_deleted = #{isDeleted,jdbcType=BIT},
       item_id = #{itemId,jdbcType=BIGINT},
-      sku_name = #{skuName,jdbcType=VARCHAR}
+      sku_name = #{skuName,jdbcType=VARCHAR},
+      sku_price = #{skuPrice,jdbcType=DECIMAL}
     where sku_id = #{skuId,jdbcType=BIGINT}
   </update>
 </mapper>

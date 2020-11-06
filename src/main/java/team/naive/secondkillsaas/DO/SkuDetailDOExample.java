@@ -1,5 +1,6 @@
 package team.naive.secondkillsaas.DO;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -472,6 +473,66 @@ public class SkuDetailDOExample {
 
         public Criteria andSkuNameNotBetween(String value1, String value2) {
             addCriterion("sku_name not between", value1, value2, "skuName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceIsNull() {
+            addCriterion("sku_price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceIsNotNull() {
+            addCriterion("sku_price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceEqualTo(BigDecimal value) {
+            addCriterion("sku_price =", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceNotEqualTo(BigDecimal value) {
+            addCriterion("sku_price <>", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceGreaterThan(BigDecimal value) {
+            addCriterion("sku_price >", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("sku_price >=", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceLessThan(BigDecimal value) {
+            addCriterion("sku_price <", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("sku_price <=", value, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceIn(List<BigDecimal> values) {
+            addCriterion("sku_price in", values, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceNotIn(List<BigDecimal> values) {
+            addCriterion("sku_price not in", values, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("sku_price between", value1, value2, "skuPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuPriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("sku_price not between", value1, value2, "skuPrice");
             return (Criteria) this;
         }
     }

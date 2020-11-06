@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team.naive.secondkillsaas.BO.OrderBO;
 import team.naive.secondkillsaas.Biz.OrderService;
+import team.naive.secondkillsaas.Config.InterceptorConfiguration;
 import team.naive.secondkillsaas.Form.KillForm;
 import team.naive.secondkillsaas.VO.ResponseVO;
+import team.naive.secondkillsaas.VO.UserForm;
+import team.naive.secondkillsaas.VO.UserVO;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -33,7 +37,8 @@ public class OrderController {
     }
 
     @GetMapping("/getOrderDetailBak")
-    public ResponseVO getOrderDetailBak(@RequestParam Long userId, @RequestParam Long skuId) {
+    public ResponseVO getOrderDetailBak(@RequestParam Long skuId, HttpSession session) {
+        Integer userId = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getId();
         return ResponseVO.buildSuccess(orderService.getOrderDetail(userId, skuId));
     }
 

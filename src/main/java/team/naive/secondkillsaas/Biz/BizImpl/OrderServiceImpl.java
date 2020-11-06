@@ -76,7 +76,9 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
         List<OrderDO> orderDOList = orderMapper.selectByExample(example);
         List<OrderBO> orderBOList = new ArrayList<>();
         for (OrderDO order: orderDOList) {
-            orderBOList.add(new OrderBO(order));
+            OrderBO orderBO = new OrderBO();
+            BeanUtils.copyProperties(order, orderBO);
+            orderBOList.add(orderBO);
         }
         return orderBOList;
     }
@@ -108,18 +110,20 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
     }
 
     @Override
-    public OrderBO getOrderDetail(Long userId, Long skuId) {
+    public OrderBO getOrderDetail(Integer userId, Long skuId) {
         if (userId == null || skuId == null) {
             return null;
         }
         OrderDOExample example = new OrderDOExample();
         OrderDOExample.Criteria criteria = example.createCriteria();
-        criteria.andUserIdEqualTo(userId).andSkuIdEqualTo(skuId);
+        criteria.andUserIdEqualTo(userId.longValue()).andSkuIdEqualTo(skuId);
         List<OrderDO> orderDOList = orderMapper.selectByExample(example);
         if (orderDOList.size() == 0) {
             return null;
         }
-        return new OrderBO(orderDOList.get(0));
+        OrderBO orderBO = new OrderBO();
+        BeanUtils.copyProperties(orderDOList.get(0), orderBO);
+        return orderBO;
     }
 
     @Override
@@ -128,6 +132,7 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
             return null;
         }
 
+        // todo: 适应redis分桶
         try {
             while (true) {
                 if (tryLock(orderId)) {
@@ -185,7 +190,9 @@ public class OrderServiceImpl implements OrderService, OrderServiceForBiz {
         try {
             long orderId = orderMapper.insert(orderDO);
             orderDO.setOrderId(orderId);
-            return ResponseVO.buildSuccess(new OrderBO(orderDO));
+            OrderBO orderBO = new OrderBO();
+            BeanUtils.copyProperties(orderDO, orderBO);
+            return ResponseVO.buildSuccess(orderBO);
         } catch (Exception e) {
             return ResponseVO.buildFailure(ORDER_CREATE_FAILURE);
         }
