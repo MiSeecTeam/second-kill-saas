@@ -1,0 +1,26 @@
+package team.naive.secondkillsaas.Config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+/**
+ * @Description
+ * @Author Toviel Xue
+ * @Date 2020/11/6
+ */
+@Configuration
+public class CORSConfiguration extends WebMvcConfigurerAdapter {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("http://localhost:80");
+        registry.addMapping("/**").allowedOrigins("http://139.224.238.182:80");
+        registry.addMapping("/**").allowedOrigins("http://182.92.126.13:80");
+        registry.addMapping("/**")
+                .allowedMethods("*")
+                .allowCredentials(true).maxAge(3600)
+                .allowedHeaders("*");
+        super.addCorsMappings(registry);
+    }
+
+}

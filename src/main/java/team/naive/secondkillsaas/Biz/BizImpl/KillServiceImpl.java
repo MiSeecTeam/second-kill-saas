@@ -158,14 +158,28 @@ public class KillServiceImpl implements KillService {
                         //修改桶中库存
                         redisService.saveSkuBucketContent(skuId, index, amount);
                         System.out.println("顾客"+userId+"抢购商品"+skuId+"，成功。");
-                        responseVO.setMessage("抢购成功！！！");
-                        responseVO.setContent(true);
                         /*
                          * 更新用于读的skuQuantity。注意，这没有上锁，所以用于读的数量是不准的。
                          */
                         SkuQuantityDO read = redisService.getSkuQuantity(skuId);
                         read.setAmount(amount);
                         redisService.saveSkuQuantity(read);
+
+                        /**
+                         * 创建订单
+                         */
+                        OrderFormDTO orderFormDTO = new OrderFormDTO();
+                        orderFormDTO.setSkuId(skuId);
+                        orderFormDTO.setUserId(userId);
+                        ResponseVO orderResponse = orderServiceForBiz.createOrder(orderFormDTO);
+                        if (orderResponse.getSuccess()) {
+                            responseVO.setMessage("抢购成功！！！");
+                            responseVO.setContent(true);
+                        } else {
+                            responseVO.setContent(false);
+                            responseVO.setMessage(orderResponse.getMessage());
+                            System.out.println("顾客"+userId+"抢购商品"+skuId+"，失败。订单创建失败。");
+                        }
                         //退出桶遍历
                         killed = true;
                         //出桶前解锁
