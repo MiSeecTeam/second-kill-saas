@@ -18,7 +18,7 @@ import java.util.List;
  * @Author Toviel Xue
  * @Date 2020/9/22
  */
-
+@CrossOrigin
 @RestController
 @RequestMapping("/item")
 public class ItemController {

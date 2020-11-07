@@ -16,7 +16,8 @@ import javax.servlet.http.HttpSession;
  * @author wangyuxiao
  * @date 2020/10/19
  */
-@RestController()
+@CrossOrigin
+@RestController
 public class AccountController {
 
     private final static String ACCOUNT_INFO_ERROR = "用户名或密码错误";

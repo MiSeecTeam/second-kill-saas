@@ -19,6 +19,7 @@ import java.util.List;
  * @Author Toviel Xue
  * @Date 2020/10/16
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/order")
 public class OrderController {

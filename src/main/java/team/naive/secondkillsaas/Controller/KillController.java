@@ -14,6 +14,7 @@ import team.naive.secondkillsaas.VO.ResponseVO;
  * @Author Toviel Xue
  * @Date 2020/9/25
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/kill")
 public class KillController {

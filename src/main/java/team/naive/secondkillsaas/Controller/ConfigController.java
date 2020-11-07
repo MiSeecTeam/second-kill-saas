@@ -1,6 +1,7 @@
 package team.naive.secondkillsaas.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
  * @author WangYuxiao
  * @date 2020/11/6 21:39
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/config")
 public class ConfigController {
