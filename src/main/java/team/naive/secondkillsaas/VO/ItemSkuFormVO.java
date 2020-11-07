@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class ItemSkuFormVO {
 
-    private List<SkuDetailDO> skuDetailList;
+    private List<SkuDetailVO> skuDetailList;
 
     private Long itemId;
 

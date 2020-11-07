@@ -159,7 +159,17 @@ public class ItemServiceImpl implements ItemService {
             BeanUtils.copyProperties(object, itemSkuFormVO);
             // 获取所有sku
             List<SkuDetailDO> skuDetailList = redisService.getSkuDetailListByItemId(itemSkuFormVO.getItemId());
-            itemSkuFormVO.setSkuDetailList(skuDetailList);
+            List<SkuDetailVO> skuDetailVOList = new ArrayList<>();
+            for (SkuDetailDO skuDetailDO: skuDetailList) {
+                SkuDetailVO skuDetailVO = new SkuDetailVO();
+                SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(skuDetailDO.getSkuId());
+                BeanUtils.copyProperties(skuDetailDO, skuDetailVO);
+                if (skuQuantityDO != null) {
+                    BeanUtils.copyProperties(skuQuantityDO, skuDetailVO);
+                }
+                skuDetailVOList.add(skuDetailVO);
+            }
+            itemSkuFormVO.setSkuDetailList(skuDetailVOList);
             itemList.add(itemSkuFormVO);
         }
         return ResponseVO.buildSuccess(itemList);
@@ -167,24 +177,25 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseVO deleteItem(Long itemId) {
-        itemDetailMapper.deleteByPrimaryKey(itemId);
+        ItemDetailDO itemDetailDO = itemDetailMapper.selectByPrimaryKey(itemId);
         SkuDetailDOExample example = new SkuDetailDOExample();
         SkuDetailDOExample.Criteria criteria = example.createCriteria();
         criteria.andItemIdEqualTo(itemId);
         List<SkuDetailDO> skuDetailDOList = skuDetailMapper.selectByExampleWithBLOBs(example);
-        List<Long> skuIds = new ArrayList<>();
         for (SkuDetailDO skuDetailDO: skuDetailDOList) {
-            skuIds.add(skuDetailDO.getSkuId());
-        }
-        for (Long id: skuIds) {
-            SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(id);
+            SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(skuDetailDO.getSkuId());
             if (skuQuantityDO.getStartTime().before(new Date()) && skuQuantityDO.getEndTime().after(new Date())) {
                 return ResponseVO.buildFailure("正在秒杀中，无法删除");
             }
         }
-        for (Long id: skuIds) {
-            skuDetailMapper.deleteByPrimaryKey(id);
-            skuQuantityMapper.deleteByPrimaryKey(id);
+        itemDetailDO.setIsDeleted(true);
+        itemDetailMapper.updateByPrimaryKey(itemDetailDO);
+        for (SkuDetailDO skuDetailDO: skuDetailDOList) {
+            skuDetailDO.setIsDeleted(true);
+            skuDetailMapper.updateByPrimaryKey(skuDetailDO);
+            SkuQuantityDO skuQuantityDO = skuQuantityMapper.selectByPrimaryKey(skuDetailDO.getSkuId());
+            skuQuantityDO.setIsDeleted(true);
+            skuQuantityMapper.updateByPrimaryKey(skuQuantityDO);
         }
         redisUpdateService.readAllItemDetailToRedis();
         redisUpdateService.readAllSkuDetailToRedis();
