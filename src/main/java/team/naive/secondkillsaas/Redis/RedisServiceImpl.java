@@ -51,7 +51,7 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public Map<Object, Object> getAllItemDetail(){
-        return redisUtils.hmget(ITEM_DETAIL_HASH);
+        return redisUtils.node("slave").hmget(ITEM_DETAIL_HASH);
     }
 
     /*

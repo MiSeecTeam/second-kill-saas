@@ -176,6 +176,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public ResponseVO getCount() {
+        ItemSkuQuantityVO itemSkuQuantityVO = new ItemSkuQuantityVO();
+        Map<Object, Object> map = redisService.getAllItemDetail();
+        itemSkuQuantityVO.setItemCount(map.size());
+        int skuCount = 0;
+        for (Object object: map.values()) {
+            ItemDetailDO itemDetailDO = new ItemDetailDO();
+            BeanUtils.copyProperties(object, itemDetailDO);
+            skuCount += redisService.getSkuDetailListByItemId(itemDetailDO.getItemId()).size();
+        }
+        itemSkuQuantityVO.setSkuCount(skuCount);
+        return ResponseVO.buildSuccess(itemSkuQuantityVO);
+    }
+
+    @Override
     public ResponseVO deleteItem(Long itemId) {
         ItemDetailDO itemDetailDO = itemDetailMapper.selectByPrimaryKey(itemId);
         SkuDetailDOExample example = new SkuDetailDOExample();

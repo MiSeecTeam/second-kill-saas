@@ -52,4 +52,10 @@ public interface ItemService {
      * @return
      */
     ResponseVO deleteItem(Long itemId);
+
+    /**
+     * 获取item及sku数量
+     * @return
+     */
+    ResponseVO getCount();
 }

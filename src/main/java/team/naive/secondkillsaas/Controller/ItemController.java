@@ -105,4 +105,13 @@ public class ItemController {
         return itemService.updateSku(skuId, amount);
     }
 
+    @GetMapping("/count")
+    public ResponseVO getCount(HttpSession session){
+        int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
+        if (role != 2) {
+            return ResponseVO.buildFailure("没有权限");
+        }
+        return itemService.getCount();
+    }
+
 }
