@@ -167,7 +167,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseVO deleteItem(Long itemId) {
-        // todo:删除时判断是否有秒杀进行
         itemDetailMapper.deleteByPrimaryKey(itemId);
         SkuDetailDOExample example = new SkuDetailDOExample();
         SkuDetailDOExample.Criteria criteria = example.createCriteria();
@@ -176,6 +175,12 @@ public class ItemServiceImpl implements ItemService {
         List<Long> skuIds = new ArrayList<>();
         for (SkuDetailDO skuDetailDO: skuDetailDOList) {
             skuIds.add(skuDetailDO.getSkuId());
+        }
+        for (Long id: skuIds) {
+            SkuQuantityDO skuQuantityDO = redisService.getSkuQuantity(id);
+            if (skuQuantityDO.getStartTime().before(new Date()) && skuQuantityDO.getEndTime().after(new Date())) {
+                return ResponseVO.buildFailure("正在秒杀中，无法删除");
+            }
         }
         for (Long id: skuIds) {
             skuDetailMapper.deleteByPrimaryKey(id);
