@@ -14,6 +14,10 @@ public class CORSConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("http://localhost:80");
+        registry.addMapping("/**").allowedOrigins("http://localhost");
+        registry.addMapping("/**").allowedOrigins("http://localhost:7890");
+        registry.addMapping("/**").allowedOrigins("http://127.0.0.1:80");
+        registry.addMapping("/**").allowedOrigins("http://127.0.0.1:7890");
         registry.addMapping("/**").allowedOrigins("http://139.224.238.182:80");
         registry.addMapping("/**").allowedOrigins("http://182.92.126.13:80");
         registry.addMapping("/**")

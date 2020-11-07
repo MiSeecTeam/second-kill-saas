@@ -10,6 +10,7 @@ import team.naive.secondkillsaas.VO.ResponseVO;
 import team.naive.secondkillsaas.VO.SkuDetailVO;
 import team.naive.secondkillsaas.VO.UserVO;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -70,7 +71,8 @@ public class ItemController {
     }
 
     @GetMapping("/all")
-    public ResponseVO getAllItemSkuDetail(HttpSession session){
+    public ResponseVO getAllItemSkuDetail(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");
@@ -79,7 +81,8 @@ public class ItemController {
     }
 
     @PostMapping("/addItem")
-    public ResponseVO addItem(@ModelAttribute ItemVO itemVO, HttpSession session){
+    public ResponseVO addItem(@ModelAttribute ItemVO itemVO,HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");
@@ -88,7 +91,8 @@ public class ItemController {
     }
 
     @PostMapping("/addSku")
-    public ResponseVO addSku(@ModelAttribute SkuDetailVO skuDetailVO, HttpSession session){
+    public ResponseVO addSku(@ModelAttribute SkuDetailVO skuDetailVO, HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");
@@ -97,7 +101,8 @@ public class ItemController {
     }
 
     @PostMapping("/modifySku")
-    public ResponseVO modifySku(@RequestParam Long skuId, @RequestParam Long amount, HttpSession session){
+    public ResponseVO modifySku(@RequestParam Long skuId, @RequestParam Long amount, HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");
@@ -106,7 +111,8 @@ public class ItemController {
     }
 
     @GetMapping("/count")
-    public ResponseVO getCount(HttpSession session){
+    public ResponseVO getCount(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");

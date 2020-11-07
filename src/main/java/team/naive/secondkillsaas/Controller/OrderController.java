@@ -11,6 +11,7 @@ import team.naive.secondkillsaas.VO.ResponseVO;
 import team.naive.secondkillsaas.VO.UserForm;
 import team.naive.secondkillsaas.VO.UserVO;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -38,7 +39,8 @@ public class OrderController {
     }
 
     @GetMapping("/getOrderDetailBak")
-    public ResponseVO getOrderDetailBak(@RequestParam Long skuId, HttpSession session) {
+    public ResponseVO getOrderDetailBak(@RequestParam Long skuId, HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         Integer userId = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getId();
         return ResponseVO.buildSuccess(orderService.getOrderDetail(userId, skuId));
     }

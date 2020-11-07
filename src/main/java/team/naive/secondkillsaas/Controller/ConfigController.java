@@ -10,6 +10,7 @@ import team.naive.secondkillsaas.Config.InterceptorConfiguration;
 import team.naive.secondkillsaas.VO.ResponseVO;
 import team.naive.secondkillsaas.VO.UserVO;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -25,7 +26,8 @@ public class ConfigController {
     private RedisUpdateService redisUpdateService;
 
     @GetMapping("/refresh")
-    public ResponseVO refresh(HttpSession session){
+    public ResponseVO refresh(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
         int role = ((UserVO)session.getAttribute(InterceptorConfiguration.SESSION_KEY)).getRole();
         if (role != 2) {
             return ResponseVO.buildFailure("没有权限");
