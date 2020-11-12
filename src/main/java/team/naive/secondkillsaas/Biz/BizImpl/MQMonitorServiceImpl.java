@@ -60,9 +60,10 @@ public class MQMonitorServiceImpl implements MQMonitorService{
             ResponseEntity<String> response = restTemplate.getForEntity(query, String.class);
             JSONObject responseJson = JSONObject.parseObject(response.getBody());
 
-            responseJson = responseJson.getJSONObject("message_stats");
+            JSONObject statJson = responseJson.getJSONObject("message_stats");
+            statJson.put("queue_totals", responseJson.getJSONObject("queue_totals"));
 
-            return ResponseVO.buildSuccess(responseJson);
+            return ResponseVO.buildSuccess(statJson);
         }catch (RestClientException e){
             e.printStackTrace();
             return ResponseVO.buildFailure("获取监控信息失败");
