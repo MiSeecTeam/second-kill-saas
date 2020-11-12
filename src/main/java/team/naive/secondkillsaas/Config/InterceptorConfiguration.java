@@ -22,11 +22,11 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration interceptorRegistration = registry.addInterceptor(new SessionInterceptor());
-        //不登陆也能访问的界面不予拦截
-        interceptorRegistration.excludePathPatterns(
-                "/login", "/index", "/signUp", "/register", "/error", "/item/**",
-                "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/**");
+//        InterceptorRegistration interceptorRegistration = registry.addInterceptor(new SessionInterceptor());
+//        //不登陆也能访问的界面不予拦截
+//        interceptorRegistration.excludePathPatterns(
+//                "/login", "/index", "/signUp", "/register", "/error", "/item/**",
+//                "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/**");
         //其他界面都拦截，进入登陆角色判断逻辑
     }
 
