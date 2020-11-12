@@ -191,6 +191,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public ResponseVO getSkuDetailBySkuId(Long skuId) {
+        SkuDetailDO skuDetailDO = redisService.getSkuDetail(skuId);
+        SkuDetailVO skuDetailVO = new SkuDetailVO();
+        BeanUtils.copyProperties(skuDetailDO, skuDetailVO);
+        return ResponseVO.buildSuccess(skuDetailVO);
+    }
+
+    @Override
     public ResponseVO deleteItem(Long itemId) {
         ItemDetailDO itemDetailDO = itemDetailMapper.selectByPrimaryKey(itemId);
         SkuDetailDOExample example = new SkuDetailDOExample();

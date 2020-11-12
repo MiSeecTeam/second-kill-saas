@@ -58,4 +58,11 @@ public interface ItemService {
      * @return
      */
     ResponseVO getCount();
+
+    /**
+     * 根据skuId获取sku
+     * @param skuId
+     * @return
+     */
+    ResponseVO getSkuDetailBySkuId(Long skuId);
 }

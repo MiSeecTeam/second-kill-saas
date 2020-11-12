@@ -80,6 +80,14 @@ public class ItemController {
         return itemService.getAllItemSku();
     }
 
+    @GetMapping("/getSku")
+    public ResponseVO getSkuDetail(@RequestParam("skuId") Long skuId){
+        ResponseVO res = new ResponseVO();
+        res.setSuccess(true);
+        res.setContent(itemService.getSkuDetailBySkuId(skuId));
+        return res;
+    }
+
     @PostMapping("/addItem")
     public ResponseVO addItem(@ModelAttribute ItemVO itemVO,HttpServletRequest httpServletRequest) {
         HttpSession session = httpServletRequest.getSession();
