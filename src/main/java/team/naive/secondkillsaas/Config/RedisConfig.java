@@ -57,7 +57,7 @@ public class RedisConfig {
 
     private static final int MAX_IDLE = 200; //最大空闲连接数
     private static final int MAX_TOTAL = 1024; //最大连接数
-    private static final long MAX_WAIT_MILLIS = 10000; //建立连接最长等待时间
+    private static final long MAX_WAIT_MILLIS = 200000; //建立连接最长等待时间
 
 
     //配置工厂
